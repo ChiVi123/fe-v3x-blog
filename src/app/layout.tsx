@@ -1,14 +1,18 @@
 import type { Metadata, Viewport } from "next";
 import { Be_Vietnam_Pro, Fraunces, IBM_Plex_Mono } from "next/font/google";
-import type { ReactNode } from "react";
+import { type ReactNode, Suspense } from "react";
+import { HoverPreview } from "~/components/post-row";
+import { ReadingStoreProvider } from "~/components/reading-store";
+import SiteFooter from "~/components/site-footer";
+import SiteHeader from "~/components/site-header";
 import { ThemeProvider } from "~/components/theme-provider";
+import { ResumeBar, ToastContainer } from "~/components/toast";
 import "./globals.css";
 
-/* Ba họ font của TẠP. — biến CSS khớp với @theme inline trong globals.css.
-   Subset "vietnamese" bắt buộc để dấu tiếng Việt hiển thị bằng đúng font. */
+/* Ba họ font của TẠP. */
 const sans = Be_Vietnam_Pro({
   subsets: ["latin", "vietnamese"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600"],
   variable: "--font-sans",
   display: "swap",
 });
@@ -23,7 +27,7 @@ const serif = Fraunces({
 
 const mono = IBM_Plex_Mono({
   subsets: ["latin", "vietnamese"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500"],
   variable: "--font-mono",
   display: "swap",
 });
@@ -53,18 +57,42 @@ export default function RootLayout({
   return (
     <html
       lang="vi"
-      data-scroll-behavior="smooth"
       className={`${sans.variable} ${serif.variable} ${mono.variable}`}
       suppressHydrationWarning
     >
-      <body className="min-h-dvh">
+      <body className="grain min-h-dvh flex flex-col">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <ReadingStoreProvider>
+            {/* Skip link */}
+            <a
+              href="#main"
+              className="fixed -top-12 left-4 z-200 bg-son text-white px-4 py-[.6rem] font-mono font-semibold text-[.72rem] tracking-widest transition-[top_.2s] focus:top-3"
+            >
+              Nội dung chính
+            </a>
+
+            <Suspense
+              fallback={
+                <header className="sticky top-0 z-50 bg-(--background)/85 backdrop-blur border-b border-border h-(--header-h)" />
+              }
+            >
+              <SiteHeader />
+            </Suspense>
+
+            <main id="main" className="flex-1">
+              {children}
+            </main>
+
+            <SiteFooter />
+            <ToastContainer />
+            <ResumeBar />
+            <HoverPreview />
+          </ReadingStoreProvider>
         </ThemeProvider>
       </body>
     </html>

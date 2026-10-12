@@ -73,8 +73,10 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 
   /* Bóng đổ cứng (không mờ) đặc trưng của TẠP. */
-  --shadow-hard: 8px 8px 0 color-mix(in srgb, var(--foreground) 12%, transparent);
-  --shadow-hard-lg: 12px 12px 0 color-mix(in srgb, var(--foreground) 12%, transparent);
+  --shadow-hard: 8px 8px 0
+    color-mix(in srgb, var(--foreground) 12%, transparent);
+  --shadow-hard-lg: 12px 12px 0
+    color-mix(in srgb, var(--foreground) 12%, transparent);
 }
 
 /* ── Chuyển động & easing (không phụ thuộc màu nên đặt ngoài inline) ── */
@@ -295,8 +297,8 @@
   *,
   *::before,
   *::after {
-    animation: none !important;
-    transition: none !important;
+    animation: none;
+    transition: none;
   }
   html {
     scroll-behavior: auto;
