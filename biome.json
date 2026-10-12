@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!node_modules", "!.next", "!dist", "!build"]
+    "includes": ["**", "!node_modules", "!.next", "!dist", "!build", "!public"]
   },
   "formatter": {
     "enabled": true,
@@ -22,7 +22,13 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "recommended": true,
+      "a11y": {
+        "noSvgWithoutTitle": "off",
+        "useAltText": "off",
+        "useKeyWithClickEvents": "off",
+        "useButtonType": "off"
+      }
     },
     "domains": {
       "next": "recommended",

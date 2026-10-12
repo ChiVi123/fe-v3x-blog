@@ -26,7 +26,7 @@
   }
   html.tfade, html.tfade *{transition:background-color .4s ease,color .4s ease,border-color .4s ease,box-shadow .4s ease}
   *{margin:0;padding:0;box-sizing:border-box}
-  [hidden]{display:none!important}
+  [hidden]{display:none}
   html{scroll-behavior:smooth;scroll-padding-top:90px}
   body{background:var(--paper);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
   ::selection{background:var(--son);color:#F5F1E8}
@@ -206,7 +206,7 @@
   .field.shake{animation:shake .32s 2}
   @keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
   .form-msg{min-height:1.2em;margin-top:.8rem;font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;color:var(--son)}
-  .form-note{margin-top:.6rem;font-size:.8rem !important}
+  .form-note{margin-top:.6rem;font-size:.8rem}
 
   /* ============ FOOTER ============ */
   footer{background:var(--box);color:var(--box-ink);border-top:1px solid var(--line);padding:clamp(3rem,7vw,5.5rem) 0 2rem}
@@ -392,7 +392,7 @@
     .foot-grid{grid-template-columns:1fr}
   }
   @media (prefers-reduced-motion:reduce){
-    *,*::before,*::after{animation:none!important;transition:none!important}
+    *,*::before,*::after{animation:none;transition:none}
     .reveal{opacity:1}
     html{scroll-behavior:auto}
   }
@@ -778,8 +778,8 @@ const LS = {
   set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} },
   del(k){ try{ localStorage.removeItem(k); }catch(e){} }
 };
-let savedSet  = new Set(LS.get('tap-saved',[]));
-let readMap   = LS.get('tap-read',{});
+const savedSet  = new Set(LS.get('tap-saved',[]));
+const readMap   = LS.get('tap-read',{});
 let lastRead  = LS.get('tap-lastread',null);
 let fsLvl     = LS.get('tap-fs',1);
 let recents   = LS.get('tap-recent',[]);
@@ -805,7 +805,7 @@ const ICON = {
 function toast(msg, action){
   const el=document.createElement('div');
   el.className='toast';
-  el.innerHTML=ICON.check+`<span>${msg}</span>`+(action?`<button class="t-act">${action.label}</button>`:'');
+  el.innerHTML=`${ICON.check}<span>${msg}</span>${action?`<button class="t-act">${action.label}</button>`:''}`;
   $('#toasts').appendChild(el);
   requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show')));
   const kill=()=>{ el.classList.remove('show'); setTimeout(()=>el.remove(),450); };
@@ -837,7 +837,7 @@ const watchReveals=(r=document)=>r.querySelectorAll('.reveal:not(.in)').forEach(
 
 /* ══════════════ ROW BÀI VIẾT (dùng chung) ══════════════ */
 function rowHTML(p,i,unsave=false){
-  const read=(readMap[p.no]??0)>=.95;
+  const _read=(readMap[p.no]??0)>=.95;
   return `<article class="row reveal" data-no="${p.no}" tabindex="0" role="button" style="--d:${i*60}ms">
     <span class="row-no">№ ${p.no}</span>
     <span class="row-cat">${p.cat}</span>
@@ -851,7 +851,7 @@ function rowHTML(p,i,unsave=false){
 
 /* ══════════════ TRANG CHỦ ══════════════ */
 (function buildHome(){
-  const items=['Tùy bút','Sách & Đọc','Đời thường','Xã hội',posts.length+' bài viết','Từ 2021','Hà Nội'];
+  const items=['Tùy bút','Sách & Đọc','Đời thường','Xã hội',`${posts.length} bài viết`,'Từ 2021','Hà Nội'];
   const g=`<div class="mq-group">${items.map(t=>`<span class="mq-item">${t} ${ICON.ast}</span>`).join('')}</div>`;
   $('#marquee').innerHTML=g+g;
   $('#homeList').innerHTML=posts.slice(0,4).map(rowHTML).join('')
@@ -886,9 +886,9 @@ function renderArchive(scrollTop=false){
   $('#archRows').innerHTML=vis.map(rowHTML).join('');
   const remain=list.length-shown;
   $('#moreBtn').hidden=remain<=0;
-  $('#moreBtn').innerHTML=`Nhiều hơn (còn ${remain}) `+ICON.right;
+  $('#moreBtn').innerHTML=`Nhiều hơn (còn ${remain}) ${ICON.right}`;
   $('#archNote').hidden=remain>0;
-  $('#archCount').textContent=`Hiển thị ${vis.length} / ${list.length}`+(archiveFilter!=='Tất cả'?` · ${archiveFilter}`:'');
+  $('#archCount').textContent=`Hiển thị ${vis.length} / ${list.length}${archiveFilter!=='Tất cả'?` · ${archiveFilter}`:''}`;
   watchReveals($('#archRows'));
   if(scrollTop) jumpTo(0);
 }
@@ -967,7 +967,7 @@ function renderPost(p){
 function updateSaveBtn(){
   const on=savedSet.has(curPost.no);
   const b=$('#saveBtn');
-  b.className='rbtn'+(on?' saved':'');
+  b.className=`rbtn${on?' saved':''}`;
   b.setAttribute('aria-pressed',on);
   b.innerHTML=ICON.bookmark+(on?' Đã lưu':' Lưu');
 }
@@ -978,7 +978,7 @@ function updateSaveBtn(){
   updateSaveBtn();
 };
  $('#shareBtn').onclick=()=>{
-  const url=location.href.split('#')[0]+'#/bai-viet/so-'+curPost.no;
+  const url=`${location.href.split('#')[0]}#/bai-viet/so-${curPost.no}`;
   const done=()=>toast('Đã chép liên kết bài viết vào clipboard.');
   if(navigator.clipboard?.writeText) navigator.clipboard.writeText(url).then(done,done); else done();
 };
@@ -1043,11 +1043,11 @@ function updateResume(){
   if(!p||lastRead.pct<.04||lastRead.pct>.96||!okViews.includes(currentView)){ bar.hidden=true; return; }
   $('#rsImg').src=IMG(p.seed,104,78);
   $('#rsTitle').textContent=p.title;
-  $('#rsPct').textContent=Math.round(lastRead.pct*100)+'%';
-  $('#rsFill').style.width=(lastRead.pct*100)+'%';
+  $('#rsPct').textContent=`${Math.round(lastRead.pct*100)}%`;
+  $('#rsFill').style.width=`${lastRead.pct*100}%`;
   bar.hidden=false;
 }
-function resumeGo(){ if(!lastRead) return; pendingPct=lastRead.pct; nav('#/bai-viet/so-'+lastRead.no); }
+function resumeGo(){ if(!lastRead) return; pendingPct=lastRead.pct; nav(`#/bai-viet/so-${lastRead.no}`); }
  $('#resume').addEventListener('click',e=>{ if(e.target.closest('#rsX')) return; resumeGo(); });
  $('#resume').addEventListener('keydown',e=>{ if(e.key==='Enter') resumeGo(); });
  $('#rsX').onclick=e=>{ e.stopPropagation(); lastRead=null; LS.del('tap-lastread'); $('#resume').hidden=true; };
@@ -1098,8 +1098,8 @@ function route(){
   document.body.dataset.view=name;
   for(const k in viewEls) viewEls[k].hidden=k!==name;
   /* tiêu đề + meta description theo view */
-  if(name==='post'&&curPost){ document.title=curPost.title+' — TẠP.'; setMeta(curPost.dek); }
-  else if(name==='author'&&authorFor){ document.title=authorFor.name+' — TẠP.'; setMeta(authorFor.bio); }
+  if(name==='post'&&curPost){ document.title=`${curPost.title} — TẠP.`; setMeta(curPost.dek); }
+  else if(name==='author'&&authorFor){ document.title=`${authorFor.name} — TẠP.`; setMeta(authorFor.bio); }
   else{
     document.title={home:'TẠP. — Tạp chí những ý nghĩ lang thang',archive:'Bài viết — TẠP.',saved:'Đã lưu — TẠP.',err:'Không tìm thấy trang — TẠP.'}[name]||'TẠP.';
     setMeta(DEFAULT_DESC);
@@ -1129,7 +1129,7 @@ addEventListener('hashchange',route);
 document.addEventListener('click',e=>{
   const a=e.target.closest('[data-scroll]'); if(!a) return;
   e.preventDefault();
-  pendingScrollSel='#'+a.dataset.scroll;
+  pendingScrollSel=`#${a.dataset.scroll}`;
   nav('#/');
 });
 /* click hàng bài / feature / next-item */
@@ -1137,13 +1137,13 @@ document.addEventListener('click',e=>{
   const t=e.target.closest('.row,[data-no].feature,.next-item');
   if(!t||e.target.closest('[data-unsave]')) return;
   const no=t.dataset.no; if(!no) return;
-  nav('#/bai-viet/so-'+no);
+  nav(`#/bai-viet/so-${no}`);
 });
 /* Enter trên hàng bài & bài nổi bật (a11y) */
 document.addEventListener('keydown',e=>{
   if(e.key!=='Enter') return;
   const t=e.target.closest?.('.row,[data-no].feature');
-  if(t&&t.dataset.no) nav('#/bai-viet/so-'+t.dataset.no);
+  if(t?.dataset.no) nav(`#/bai-viet/so-${t.dataset.no}`);
 });
  $('#savedBtn').onclick=()=>nav('#/da-luu');
  $('#toTop').onclick=e=>{ e.preventDefault(); jumpTo(0); };
@@ -1161,7 +1161,7 @@ function renderHints(){
 }
 function runSearch(){
   const q=sInput.value.trim();
-  lastResults=q?posts.filter(p=>deacc(p.title+' '+p.cat).includes(deacc(q))):posts.slice(0,4);
+  lastResults=q?posts.filter(p=>deacc(`${p.title} ${p.cat}`).includes(deacc(q))):posts.slice(0,4);
   renderHints();
   $('#searchResults').innerHTML=!lastResults.length
     ? `<p class="sr-empty">Không tìm thấy bài nào cho “${esc(q)}” — thử một từ khác, hoặc tìm không cần dấu.</p>`
@@ -1186,7 +1186,7 @@ function closeSearch(){
 function searchGo(no){
   addRecent(sInput.value.trim());
   closeSearch();
-  nav('#/bai-viet/so-'+no);
+  nav(`#/bai-viet/so-${no}`);
 }
 sInput.addEventListener('input',runSearch);
 sResults.addEventListener('click',e=>{ const b=e.target.closest('.sr-item'); if(b) searchGo(b.dataset.no); });

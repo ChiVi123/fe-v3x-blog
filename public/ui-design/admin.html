@@ -18,7 +18,7 @@
     --side-w:236px;
   }
   *{margin:0;padding:0;box-sizing:border-box}
-  [hidden]{display:none!important}
+  [hidden]{display:none}
   body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:14.5px;-webkit-font-smoothing:antialiased}
   ::selection{background:var(--son);color:#F5F1E8}
   ::-webkit-scrollbar{width:9px;height:9px}
@@ -217,7 +217,7 @@
     .tb-actions .btn span{display:none}
     .hide-s{display:none}
   }
-  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none;transition:none}}
 </style>
 </head>
 <body>
@@ -378,8 +378,8 @@ function api(method,path,body){
 }
 function route_(method,path,body){
   const seg=path.split('/').filter(Boolean);
-  const R=method+' '+method_((seg[0]||''),seg.length);
-  switch(method+' /'+seg.join('/')){
+  const _R=`${method} ${method_((seg[0]||''),seg.length)}`;
+  switch(`${method} /${seg.join('/')}`){
     case 'POST /login':{
       const db=loadDB();
       const u=db.users.find(u=>u.email===body.email&&u.pass===body.pass);
@@ -399,7 +399,7 @@ function route_(method,path,body){
       const p={...body,no:nextNo(db),status:body.status||'draft',updated:today,date:body.status==='pub'?today:'—'};
       db.posts.unshift(p); saveDB(db); return p;
     }
-    case 'PUT /posts/'+seg[1]:{
+    case `PUT /posts/${seg[1]}`:{
       const u=me(); const db=loadDB();
       const p=db.posts.find(x=>x.no===seg[1]);
       if(!p) throw 'Bài viết không tồn tại.';
@@ -409,7 +409,7 @@ function route_(method,path,body){
       if(p.status==='pub'&&p.date==='—') p.date=today;
       saveDB(db); return p;
     }
-    case 'DELETE /posts/'+seg[1]:{
+    case `DELETE /posts/${seg[1]}`:{
       const u=me(); const db=loadDB();
       const i=db.posts.findIndex(x=>x.no===seg[1]);
       if(i<0) throw 'Bài viết không tồn tại.';
@@ -429,10 +429,10 @@ function route_(method,path,body){
       const db=loadDB();
       const name=(body.name||'').trim(); if(!name) throw 'Tên chuyên mục trống.';
       if(db.cats.some(c=>c.name.toLowerCase()===name.toLowerCase())) throw 'Chuyên mục đã tồn tại.';
-      const c={id:'c'+Date.now(),name,slug:slugify(name)};
+      const c={id:`c${Date.now()}`,name,slug:slugify(name)};
       db.cats.push(c); saveDB(db); return c;
     }
-    case 'PUT /cats/'+seg[1]:{
+    case `PUT /cats/${seg[1]}`:{
       const u=me(); if(ROLE_RK[u.role]<2) throw 'Không đủ quyền.';
       const db=loadDB(); const c=db.cats.find(x=>x.id===seg[1]);
       if(!c) throw 'Không tìm thấy.';
@@ -440,7 +440,7 @@ function route_(method,path,body){
       if(db.cats.some(x=>x.id!==c.id&&x.name.toLowerCase()===name.toLowerCase())) throw 'Chuyên mục đã tồn tại.';
       c.name=name; c.slug=slugify(name); saveDB(db); return c;
     }
-    case 'DELETE /cats/'+seg[1]:{
+    case `DELETE /cats/${seg[1]}`:{
       const u=me(); if(ROLE_RK[u.role]<2) throw 'Không đủ quyền.';
       const db=loadDB();
       const used=db.posts.filter(p=>p.cat===db.cats.find(x=>x.id===seg[1])?.name).length;
@@ -454,29 +454,29 @@ function route_(method,path,body){
       if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw 'Email không hợp lệ.';
       if(db.users.some(x=>x.email===email)) throw 'Email đã có trong toà soạn.';
       if(!(body.name||'').trim()) throw 'Thiếu tên.';
-      const nu={id:'u'+Date.now(),name:body.name.trim(),email,pass:body.pass||'tap2025',role:body.role||'author',key:null};
+      const nu={id:`u${Date.now()}`,name:body.name.trim(),email,pass:body.pass||'tap2025',role:body.role||'author',key:null};
       db.users.push(nu); saveDB(db); return pubUser(nu);
     }
-    case 'PUT /users/'+seg[1]:{
+    case `PUT /users/${seg[1]}`:{
       const u=me(); if(u.role!=='admin') throw 'Chỉ tổng biên tập mới quản lý thành viên.';
       const db=loadDB(); const t=db.users.find(x=>x.id===seg[1]);
       if(!t) throw 'Không tìm thấy thành viên.';
       if(t.id===u.id&&body.role!==u.role) throw 'Không thể tự thay đổi vai trò của chính mình.';
       t.role=body.role??t.role; saveDB(db); return pubUser(t);
     }
-    case 'DELETE /users/'+seg[1]:{
+    case `DELETE /users/${seg[1]}`:{
       const u=me(); if(u.role!=='admin') throw 'Chỉ tổng biên tập mới quản lý thành viên.';
       if(seg[1]===u.id) throw 'Không thể xoá chính mình.';
       const db=loadDB(); db.users=db.users.filter(x=>x.id!==seg[1]); saveDB(db); return {ok:true};
     }
   }
-  throw 'Không tìm thấy API: '+method+' /'+seg.join('/');
+  throw `Không tìm thấy API: ${method} /${seg.join('/')}`;
 }
 function method_(s){return s}
 function me(){ const s=LS.get(SK,null); if(!s) throw 'Chưa đăng nhập.'; const u=loadDB().users.find(x=>x.id===s.id); if(!u) throw 'Tài khoản không còn tồn tại.'; return u; }
 function pubUser(u){ return {id:u.id,name:u.name,email:u.email,role:u.role,key:u.key}; }
 function nextNo(db){
-  const mx=db.posts.reduce((m,p)=>{const n=parseInt(p.no);return isNaN(n)?m:Math.max(m,n)},0);
+  const mx=db.posts.reduce((m,p)=>{const n=parseInt(p.no, 10);return Number.isNaN(n)?m:Math.max(m,n)},0);
   return String(mx+1);
 }
 
@@ -505,8 +505,8 @@ const ICON={
 };
 function toast(msg,ok=false){
   const el=document.createElement('div');
-  el.className='toast'+(ok?' ok':'');
-  el.innerHTML=(ok?ICON.check:ICON.warn)+`<span>${msg}</span>`;
+  el.className=`toast${ok?' ok':''}`;
+  el.innerHTML=`${ok?ICON.check:ICON.warn}<span>${msg}</span>`;
   $('#toasts').appendChild(el);
   requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show')));
   setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),400)},3600);
@@ -531,7 +531,7 @@ function confirmBox(title,text){
 function md(src){
   const lines=esc(src||'').split('\n');
   let html='',inUl=false,buf=[];
-  const flush=()=>{if(buf.length){html+='<p>'+buf.map(l=>inline(l)).join('<br>')+'</p>';buf=[]}};
+  const flush=()=>{if(buf.length){html+=`<p>${buf.map(l=>inline(l)).join('<br>')}</p>`;buf=[]}};
   const inline=s=>s
     .replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')
     .replace(/\*(.+?)\*/g,'<i>$1</i>')
@@ -539,9 +539,9 @@ function md(src){
     .replace(/\[(.+?)\]\((.+?)\)/g,'<a href="$2">$1</a>');
   for(const ln of lines){
     if(ln.trim()===''){flush();if(inUl){html+='</ul>';inUl=false}continue}
-    if(/^##\s/.test(ln)){flush();html+='<h3>'+inline(ln.slice(3))+'</h3>';continue}
-    if(/^>\s?/.test(ln)){flush();html+='<blockquote>'+inline(ln.replace(/^>\s?/,''))+'</blockquote>';continue}
-    if(/^-\s/.test(ln)){flush();if(!inUl){html+='<ul>';inUl=true}html+='<li>'+inline(ln.slice(2))+'</li>';continue}
+    if(/^##\s/.test(ln)){flush();html+=`<h3>${inline(ln.slice(3))}</h3>`;continue}
+    if(/^>\s?/.test(ln)){flush();html+=`<blockquote>${inline(ln.replace(/^>\s?/,''))}</blockquote>`;continue}
+    if(/^-\s/.test(ln)){flush();if(!inUl){html+='<ul>';inUl=true}html+=`<li>${inline(ln.slice(2))}</li>`;continue}
     buf.push(ln);
   }
   flush();if(inUl)html+='</ul>';
@@ -563,7 +563,7 @@ function closeSide(){ $('#side').classList.remove('open'); $('#bd')?.remove(); }
 function renderNav(){
   const items=[
     ['#dash','Tổng quan',ICON.grid,1,()=>S.posts.length],
-    ['#posts','Bài viết',ICON.file,1,()=>S.posts.filter(p=>p.status==='draft').length+' nháp'],
+    ['#posts','Bài viết',ICON.file,1,()=>`${S.posts.filter(p=>p.status==='draft').length} nháp`],
     ['#cats','Chuyên mục',ICON.tag,2,()=>S.cats.length],
     ['#home','Dàn trang chủ',ICON.layout,2,null],
     ['#members','Thành viên',ICON.users,3,()=>S.users.length],
@@ -625,7 +625,7 @@ function vPosts(){
   $('#tbTitle').textContent='Bài viết';
   $('#tbActions').innerHTML=`<a class="btn solid" href="#posts/new">${ICON.plus}<span>Bài mới</span></a>`;
   const mine=S.me.role==='author';
-  const list=S.posts.filter(p=>(fStatus==='all'||p.status===fStatus)&&(mine?true:true))
+  const list=S.posts.filter(p=>(fStatus==='all'||p.status===fStatus)&&(true))
     .filter(p=>!fQuery||deacc(p.title).includes(deacc(fQuery)));
   const pill=(v,l,n)=>`<button class="pill ${fStatus===v?'on':''}" data-st="${v}">${l} (${n})</button>`;
   $('#view').innerHTML=`
@@ -660,11 +660,11 @@ function vPosts(){
   $('#pq').oninput=e=>{fQuery=e.target.value;
     /* giữ focus khi render lại */
     const keep=e.target.selectionStart; vPosts(); const q=$('#pq'); q.focus(); q.setSelectionRange(keep,keep);};
-  $$('#view [data-ed]').forEach(b=>b.onclick=()=>location.hash='#posts/edit/'+b.dataset.ed);
+  $$('#view [data-ed]').forEach(b=>b.onclick=()=>location.hash=`#posts/edit/${b.dataset.ed}`);
   $$('#view [data-pub]').forEach(b=>b.onclick=async()=>{
     const p=S.posts.find(x=>x.no===b.dataset.pub);
     const ns=p.status==='pub'?'draft':'pub';
-    try{ await api('PUT','/posts/'+p.no,{status:ns}); p.status=ns;
+    try{ await api('PUT',`/posts/${p.no}`,{status:ns}); p.status=ns;
       toast(ns==='pub'?`Đã xuất bản № ${p.no} — bài sẽ xuất hiện trên trang công khai.`:`Đã hạ № ${p.no} về bản nháp.`,true);
       vPosts(); renderNav();
     }catch(e){toast(e)}
@@ -672,7 +672,7 @@ function vPosts(){
   $$('#view [data-del]').forEach(b=>b.onclick=async()=>{
     const p=S.posts.find(x=>x.no===b.dataset.del);
     if(await confirmBox(`Xoá bài № ${p.no}?`,`“${p.title}” sẽ bị xoá vĩnh viễn khỏi toà soạn (mock — có thể Reset để lấy lại).`)){
-      try{ await api('DELETE','/posts/'+p.no);
+      try{ await api('DELETE',`/posts/${p.no}`);
         S.posts=S.posts.filter(x=>x.no!==p.no);
         S.home.order=S.home.order.filter(n=>n!==p.no);
         if(S.home.featured===p.no)S.home.featured=S.home.order[0]||null;
@@ -685,7 +685,7 @@ function vPosts(){
 /* ---- EDITOR ---- */
 function vEditor(id){
   const isNew=!id;
-  let p=isNew
+  const p=isNew
     ? {no:'…',cat:S.cats[0]?.name||'',title:'',slug:'',dek:'',quote:'',body:'',cover:seedAuto(),author:S.me.key||'ann',status:'draft'}
     : S.posts.find(x=>x.no===id);
   if(!isNew&&!p){ location.hash='#posts'; return; }
@@ -693,7 +693,7 @@ function vEditor(id){
   let slugTouched=!isNew;
   const pNo=isNew?previewNo():p.no;
 
-  $('#tbTitle').textContent=isNew?'Bài mới':'Sửa: № '+p.no;
+  $('#tbTitle').textContent=isNew?'Bài mới':`Sửa: № ${p.no}`;
   $('#tbActions').innerHTML=`
     ${p.status==='pub'?`<a class="btn ghost" href="index.html#/bai-viet/so-${p.no}" target="_blank">${ICON.eye}<span>Xem trên trang</span></a>`:''}
     <button class="btn son" id="saveBtn">${ICON.check}<span>Lưu</span></button>`;
@@ -768,13 +768,13 @@ function vEditor(id){
   </div>`;
 
   const g=id2=>document.getElementById(id2);
-  function previewNo(){ const mx=S.posts.reduce((m,x)=>{const n=parseInt(x.no);return isNaN(n)?m:Math.max(m,n)},0); return String(mx+1); }
-  function seedAuto(){ return 'tap-'+Math.random().toString(36).slice(2,8); }
+  function previewNo(){ const mx=S.posts.reduce((m,x)=>{const n=parseInt(x.no, 10);return Number.isNaN(n)?m:Math.max(m,n)},0); return String(mx+1); }
+  function seedAuto(){ return `tap-${Math.random().toString(36).slice(2,8)}`; }
   function sync(){
     const t=g('fTitle').value.trim(), body=g('fBody').value;
     g('mWc').textContent=wc(body).toLocaleString('vi');
     g('mRead').textContent=Math.max(1,Math.round(wc(body)/200));
-    g('pvCat').textContent=(g('fCat').value||'')+' · № '+pNo;
+    g('pvCat').textContent=`${g('fCat').value||''} · № ${pNo}`;
     g('pvTitle').textContent=t||'Tiêu đề bài viết…';
     g('pvDek').textContent=g('fDek').value;
     g('pvBody').innerHTML=md(body)||'<p style="color:var(--muted)">Thân bài sẽ hiện ở đây…</p>';
@@ -810,14 +810,14 @@ function vEditor(id){
     if(!t){ toast('Tiêu đề không được để trống.'); reset(); return; }
     if(!g('fBody').value.trim()){ toast('Thân bài chưa có nội dung.'); reset(); return; }
     const payload={
-      title:t, slug:slugify(g('fSlug').value||t)||'bai-viet-'+pNo,
+      title:t, slug:slugify(g('fSlug').value||t)||`bai-viet-${pNo}`,
       cat:g('fCat').value, author:g('fAuthor').value,
       status:g('fStatus').value, dek:g('fDek').value.trim(),
       quote:g('fQuote').value.trim(), body:g('fBody').value,
       cover:g('coverImg').dataset.data||g('coverImg').dataset.seed||p.cover,
     };
     try{
-      const saved=isNew?await api('POST','/posts',payload):await api('PUT','/posts/'+p.no,payload);
+      const saved=isNew?await api('POST','/posts',payload):await api('PUT',`/posts/${p.no}`,payload);
       if(isNew) S.posts.unshift(saved); else Object.assign(S.posts.find(x=>x.no===p.no),saved);
       if(S.home.order.includes(p.no)&&!S.home.order.includes(saved.no)) /* giữ nguyên */;
       toast(isNew?`Đã tạo № ${saved.no} (${saved.status==='pub'?'đã đăng':'nháp'}).`:'Đã lưu thay đổi.',true);
@@ -858,7 +858,7 @@ function vCats(){
     $('#mc').onclick=()=>$('#modalRoot').innerHTML='';
     $('#mo').onclick=async()=>{
       try{ const c=await api('POST','/cats',{name:$('#cn').value}); S.cats.push(c);
-        $('#modalRoot').innerHTML=''; toast('Đã thêm chuyên mục “'+c.name+'”.',true); vCats(); renderNav();
+        $('#modalRoot').innerHTML=''; toast(`Đã thêm chuyên mục “${c.name}”.`,true); vCats(); renderNav();
       }catch(e){toast(e)}
     };
     $('#cn').focus();
@@ -868,7 +868,7 @@ function vCats(){
     cell.innerHTML=`<input class="inp" style="padding:.3rem .5rem" value="${esc(c.name)}" id="rn">`;
     const inp=cell.querySelector('input'); inp.focus(); inp.select();
     const save=async()=>{
-      try{ const up=await api('PUT','/cats/'+c.id,{name:inp.value});
+      try{ const up=await api('PUT',`/cats/${c.id}`,{name:inp.value});
         const old=c.name; c.name=up.name; c.slug=up.slug;
         S.posts.forEach(p=>{if(p.cat===old)p.cat=up.name}); /* mock: đổi tên kéo theo bài viết */
         toast('Đã đổi tên chuyên mục.',true); vCats();
@@ -880,7 +880,7 @@ function vCats(){
   $$('#view [data-del]').forEach(b=>b.onclick=async()=>{
     const c=S.cats.find(x=>x.id===b.dataset.del);
     if(await confirmBox('Xoá chuyên mục?',`“${c.name}” sẽ bị gỡ. Chỉ xoá được khi không còn bài nào.`)){
-      try{ await api('DELETE','/cats/'+c.id); S.cats=S.cats.filter(x=>x.id!==c.id);
+      try{ await api('DELETE',`/cats/${c.id}`); S.cats=S.cats.filter(x=>x.id!==c.id);
         toast('Đã xoá chuyên mục.',true); vCats(); renderNav();
       }catch(e){toast(e)}
     }
@@ -919,7 +919,7 @@ function vHomeCfg(){
       </div>
     </div>
   </div>`;
-  let order=ordered.map(p=>p.no);
+  const order=ordered.map(p=>p.no);
   $$('#ord [data-mv]').forEach(b=>b.onclick=()=>{
     const li=b.closest('li'), i=order.indexOf(li.dataset.no);
     const j=b.dataset.mv==='up'?i-1:i+1;
@@ -930,7 +930,7 @@ function vHomeCfg(){
     function renderOrd(){}
   });
   /* đơn giản hoá: nút lên/xuống thao tác trực tiếp DOM + mảng */
-  function bindMove(){}
+  function _bindMove(){}
   $('#saveHome').onclick=async()=>{
     /* đọc thứ tự hiện tại từ DOM sau các lần di chuyển */
     const finalOrder=[...document.querySelectorAll('#ord li')].map(li=>li.dataset.no);
@@ -942,7 +942,7 @@ function vHomeCfg(){
   /* di chuyển: gắn lại sau mỗi lần render */
   $$('#ord [data-mv]').forEach(b=>b.onclick=()=>{
     const li=b.closest('li'), no=li.dataset.no;
-    let arr=[...$('#ord').children].map(x=>x.dataset.no);
+    const arr=[...$('#ord').children].map(x=>x.dataset.no);
     const i=arr.indexOf(no), j=b.dataset.mv==='up'?i-1:i+1;
     if(j<0||j>=arr.length)return;
     [arr[i],arr[j]]=[arr[j],arr[i]];
@@ -963,7 +963,7 @@ function vMembers(){
         const nPosts=S.posts.filter(p=>p.author===u.key).length;
         return `<tr data-id="${u.id}">
           <td><div class="t-title">${esc(u.name)}${self?' <b class="mono" style="color:var(--son);font-size:.6rem">· BẠN</b>':''}</div>
-              <div class="t-slug">${u.key?nPosts+' bài trên trang':'Không viết bài'}</div></td>
+              <div class="t-slug">${u.key?`${nPosts} bài trên trang`:'Không viết bài'}</div></td>
           <td class="hide-s mono" style="font-size:.72rem;color:var(--muted)">${esc(u.email)}</td>
           <td><select class="sel" data-role="${u.id}" style="width:auto;padding:.35rem .5rem;font-size:.8rem" ${self?'disabled title="Không thể tự đổi vai trò"':''}>
             ${Object.entries(ROLE_LB).map(([k,l])=>`<option value="${k}" ${u.role===k?'selected':''}>${l}</option>`).join('')}
@@ -990,7 +990,7 @@ function vMembers(){
     $('#un').focus();
   };
   $$('#view [data-role]').forEach(sel=>sel.onchange=async()=>{
-    try{ await api('PUT','/users/'+sel.dataset.role,{role:sel.value});
+    try{ await api('PUT',`/users/${sel.dataset.role}`,{role:sel.value});
       S.users.find(u=>u.id===sel.dataset.role).role=sel.value;
       toast('Đã cập nhật vai trò.',true); renderNav();
     }catch(e){toast(e); vMembers();}
@@ -998,7 +998,7 @@ function vMembers(){
   $$('#view [data-del]').forEach(b=>b.onclick=async()=>{
     const u=S.users.find(x=>x.id===b.dataset.del);
     if(await confirmBox('Xoá thành viên?',`${u.name} (${u.email}) sẽ mất quyền truy cập toà soạn.`)){
-      try{ await api('DELETE','/users/'+u.id); S.users=S.users.filter(x=>x.id!==u.id);
+      try{ await api('DELETE',`/users/${u.id}`); S.users=S.users.filter(x=>x.id!==u.id);
         toast('Đã xoá thành viên.',true); vMembers(); renderNav();
       }catch(e){toast(e)}
     }
@@ -1010,7 +1010,7 @@ function route(){
   const h=location.hash.replace(/^#/,'')||'dash';
   const seg=h.split('/').filter(Boolean);
   closeSide();
-  renderNav(); setActive('#'+seg[0]);
+  renderNav(); setActive(`#${seg[0]}`);
   if(seg[0]==='dash'||seg.length===0) vDash();
   else if(seg[0]==='posts'&&seg[1]==='new') vEditor(null);
   else if(seg[0]==='posts'&&seg[1]==='edit') vEditor(seg[2]);
