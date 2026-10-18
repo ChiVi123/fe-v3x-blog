@@ -1,15 +1,6 @@
-export type Post = {
-  no: string;
-  cat: string;
-  title: string;
-  date: string;
-  read: number;
-  seed: string;
-  author: string;
-  dek: string;
-  quote: string;
-  body: string[];
-};
+import type { Post } from "~/types";
+
+export type { Post };
 
 export const posts: Post[] = [
   {

@@ -1,8 +1,6 @@
-export type Author = {
-  name: string;
-  role: string;
-  bio: string;
-};
+import type { Author } from "~/types";
+
+export type { Author };
 
 export const authors: Record<string, Author> = {
   ann: {
