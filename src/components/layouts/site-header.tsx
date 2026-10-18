@@ -1,9 +1,12 @@
 "use client";
 
+import { cn } from "cn";
 import { Bookmark, Moon, Search, Sun, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
+import { Skeleton } from "~/components/ui/skeleton";
 import { useReadingStore } from "~/hooks/use-reading-store";
 import { authors, posts } from "~/lib/data";
 import { deaccent } from "~/lib/utils";
@@ -285,18 +288,25 @@ function MenuOverlay({
 }
 
 function ThemeTogglePill() {
-  const [dark, setDark] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const [dark, setDark] = useState<boolean | undefined>(undefined);
+
   useEffect(() => {
-    setDark(document.documentElement.classList.contains("dark"));
-  }, []);
+    if (!theme) {
+      return;
+    }
+
+    let isDark = false;
+    if (theme === "system") {
+      isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    } else {
+      isDark = theme === "dark";
+    }
+    setDark(isDark);
+  }, [theme]);
 
   function toggle() {
-    document.documentElement.classList.toggle("dark");
-    const isDark = document.documentElement.classList.contains("dark");
-    setDark(isDark);
-    try {
-      localStorage.setItem("tap-theme", isDark ? "dark" : "light");
-    } catch {}
+    setTheme(theme === "dark" ? "light" : "dark");
   }
 
   return (
@@ -314,18 +324,33 @@ function ThemeTogglePill() {
 
 /* ─── ThemeBtn (header) ─── */
 function ThemeBtnHead() {
-  const [dark, setDark] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const [dark, setDark] = useState<boolean | undefined>(undefined);
+
   useEffect(() => {
-    setDark(document.documentElement.classList.contains("dark"));
-  }, []);
+    if (!theme) {
+      return;
+    }
+
+    let isDark = false;
+    if (theme === "system") {
+      isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    } else {
+      isDark = theme === "dark";
+    }
+    setDark(isDark);
+  }, [theme]);
 
   function toggle() {
-    document.documentElement.classList.toggle("dark");
-    const isDark = document.documentElement.classList.contains("dark");
-    setDark(isDark);
-    try {
-      localStorage.setItem("tap-theme", isDark ? "dark" : "light");
-    } catch {}
+    setTheme(theme === "dark" ? "light" : "dark");
+  }
+
+  if (dark === undefined) {
+    return (
+      <div className="grid place-items-center size-8.5 border border-border">
+        <Skeleton className="size-4 rounded-full" />
+      </div>
+    );
   }
 
   return (
@@ -336,15 +361,17 @@ function ThemeBtnHead() {
       aria-label="Đổi giao diện sáng / tối"
     >
       <Moon
-        className={`icon-moon w-4 h-4 absolute transition-[.45s_cubic-bezier(.5,1.6,.4,1)] ${
-          dark ? "opacity-0 -rotate-90 scale-[.4]" : "opacity-100"
-        }`}
+        className={cn(
+          "icon-moon w-4 h-4 absolute transition-[.45s_cubic-bezier(.5,1.6,.4,1)]",
+          { "opacity-0 -rotate-90 scale-[.4]": dark, "opacity-100": !dark },
+        )}
         strokeWidth={1.8}
       />
       <Sun
-        className={`icon-sun w-4 h-4 absolute transition-[.45s_cubic-bezier(.5,1.6,.4,1)] ${
-          dark ? "opacity-100" : "opacity-0 rotate-90 scale-[.4]"
-        }`}
+        className={cn(
+          "icon-sun w-4 h-4 absolute transition-[.45s_cubic-bezier(.5,1.6,.4,1)]",
+          { "opacity-100": dark, "opacity-0 rotate-90 scale-[.4]": !dark },
+        )}
         strokeWidth={1.8}
       />
     </button>
@@ -482,7 +509,9 @@ export default function SiteHeader() {
                 </span>
               )}
             </Link>
+
             <ThemeBtnHead />
+
             <Link
               className="hidden md:inline-flex font-mono text-[.68rem] tracking-widest uppercase bg-foreground text-background px-[1.1rem] py-[.62rem] transition-[background_.25s] hover:bg-son hover:text-white"
               href="/#dang-ky"
