@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "cn";
 import { ArrowUpRight, X } from "lucide-react";
 import Link from "next/link";
 import { useReadingStore } from "~/hooks/use-reading-store";
@@ -25,7 +26,10 @@ export default function PostRow({
   return (
     <Link
       href={`/bai-viet/${post.no}`}
-      className={`row group grid items-center gap-[1.4rem] px-[1.2rem] mx-[-1.2rem] border-t border-border cursor-pointer transition-[background_.3s] hover:bg-muted ${isRead ? "read" : ""}`}
+      className={cn(
+        "row group grid items-center gap-[1.4rem] px-[1.2rem] mx-[-1.2rem] border-t border-border cursor-pointer transition-[background_.3s] hover:bg-muted",
+        { read: isRead },
+      )}
       style={{
         gridTemplateColumns: "4.4rem 8.6rem 1fr auto 2.4rem",
         padding: "1.55rem 1.2rem",
@@ -35,7 +39,10 @@ export default function PostRow({
     >
       {/* № */}
       <span
-        className={`font-mono text-[.72rem] text-muted-foreground transition-[.3s] ${isRead ? "line-through opacity-45" : ""}`}
+        className={cn(
+          "font-mono text-[.72rem] text-muted-foreground transition-[.3s]",
+          { "line-through opacity-45": isRead },
+        )}
       >
         № {post.no}
       </span>
