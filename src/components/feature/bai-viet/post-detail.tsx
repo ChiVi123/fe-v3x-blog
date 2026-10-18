@@ -114,6 +114,7 @@ export default function PostDetail({ post }: { post: Post }) {
             alt={`Ảnh minh họa: ${post.title}`}
             width={1200}
             height={750}
+            loading="eager"
             className="w-full aspect-3/2 object-cover"
             style={{ filter: "grayscale(1) contrast(1.05) sepia(.08)" }}
           />
