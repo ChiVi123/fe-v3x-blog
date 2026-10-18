@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import PostDetail from "~/components/feature/bai-viet/post-detail";
 import { getPostByNo, posts } from "~/lib/data";
-import PostDetail from "./post-detail";
 
 export function generateStaticParams() {
   return posts.map((p) => ({ no: p.no }));

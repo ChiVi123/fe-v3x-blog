@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import AuthorDetail from "~/components/feature/tac-gia/author-detail";
 import { authors, getPostsByAuthor } from "~/lib/data";
-import AuthorDetail from "./author-detail";
 
 export function generateStaticParams() {
   return Object.keys(authors).map((id) => ({ id }));

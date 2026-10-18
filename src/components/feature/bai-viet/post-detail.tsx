@@ -1,16 +1,14 @@
 "use client";
 
+import { Bookmark, Link2 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
-import { useReadingActions, useReadingStore } from "~/components/reading-store";
-import { useToast } from "~/components/toast";
-import {
-  authors,
-  getAuthorInitials,
-  getRelatedPosts,
-  type Post,
-} from "~/lib/data";
+import { useReadingActions, useReadingStore } from "~/hooks/use-reading-store";
+import { useToast } from "~/hooks/use-toast";
+import { authors, getAuthorInitials, getRelatedPosts } from "~/lib/data";
 import { img } from "~/lib/utils";
+import type { Post } from "~/types";
 
 const FS = ["1.02rem", "1.13rem", "1.26rem"];
 
@@ -56,7 +54,7 @@ export default function PostDetail({ post }: { post: Post }) {
       key="quote"
       className="my-[2.6rem] pl-[1.6rem] border-l-[3px] border-son font-serif italic font-[440] text-[1.35em] leading-[1.45]"
     >
-      "{post.quote}"
+      &ldquo;{post.quote}&rdquo;
     </blockquote>,
   );
 
@@ -111,12 +109,12 @@ export default function PostDetail({ post }: { post: Post }) {
 
         {/* Hero image */}
         <figure className="mb-10">
-          <img
+          <Image
             src={img(post.seed, 1200, 750)}
             alt={`Ảnh minh họa: ${post.title}`}
             width={1200}
             height={750}
-            className="w-full aspect-[3/2] object-cover"
+            className="w-full aspect-3/2 object-cover"
             style={{ filter: "grayscale(1) contrast(1.05) sepia(.08)" }}
           />
           <figcaption className="mt-[.65rem] font-mono text-[.64rem] tracking-[.08em] text-muted-foreground">
@@ -176,7 +174,7 @@ export default function PostDetail({ post }: { post: Post }) {
                 href={`/bai-viet/${q.no}`}
                 className="flex items-center gap-[1.1rem] w-full text-left border border-border p-[.85rem] mb-[.8rem] transition-[.3s] hover:bg-muted hover:border-foreground group"
               >
-                <img
+                <Image
                   src={img(q.seed, 160, 120)}
                   alt=""
                   width={78}
@@ -207,7 +205,7 @@ export default function PostDetail({ post }: { post: Post }) {
       >
         <button
           type="button"
-          className="min-w-10 h-10 grid place-items-center border border-border font-mono text-[.78rem] tracking-[.04em] transition-[.25s] px-[.6rem] hover:bg-foreground hover:text-background hover:border-foreground disabled:opacity-30 disabled:cursor-default"
+          className="min-w-10 h-10 grid place-items-center border border-border font-mono text-[.78rem] tracking-[.04em] transition-[.25s] px-[.6rem] hover:bg-foreground hover:text-background hover:border-foreground disabled:opacity-30 disabled:cursor-default cursor-pointer"
           disabled={fsLvl === 0}
           onClick={() => setFs(Math.max(0, fsLvl - 1))}
           aria-label="Giảm cỡ chữ"
@@ -216,7 +214,7 @@ export default function PostDetail({ post }: { post: Post }) {
         </button>
         <button
           type="button"
-          className="min-w-10 h-10 grid place-items-center border border-border font-mono text-[.78rem] tracking-[.04em] transition-[.25s] px-[.6rem] hover:bg-foreground hover:text-background hover:border-foreground disabled:opacity-30 disabled:cursor-default"
+          className="min-w-10 h-10 grid place-items-center border border-border font-mono text-[.78rem] tracking-[.04em] transition-[.25s] px-[.6rem] hover:bg-foreground hover:text-background hover:border-foreground disabled:opacity-30 disabled:cursor-default cursor-pointer"
           disabled={fsLvl === FS.length - 1}
           onClick={() => setFs(Math.min(FS.length - 1, fsLvl + 1))}
           aria-label="Tăng cỡ chữ"
@@ -226,7 +224,9 @@ export default function PostDetail({ post }: { post: Post }) {
         <span className="w-px h-5.5 bg-border mx-1" />
         <button
           type="button"
-          className={`min-w-10 h-10 flex items-center gap-1 justify-center border font-mono text-[.78rem] tracking-[.04em] transition-[.25s] px-[.6rem] hover:bg-foreground hover:text-background hover:border-foreground ${isSaved ? "border-son text-son" : "border-border"}`}
+          className={`min-w-10 h-10 flex items-center gap-1 justify-center border font-mono text-[.78rem] tracking-[.04em] transition-[.25s] px-[.6rem] hover:bg-foreground hover:text-background hover:border-foreground cursor-pointer ${
+            isSaved ? "border-son text-son" : "border-border"
+          }`}
           aria-pressed={isSaved}
           aria-label={isSaved ? "Bỏ lưu bài viết" : "Lưu bài viết"}
           onClick={() => {
@@ -235,21 +235,16 @@ export default function PostDetail({ post }: { post: Post }) {
             else toast(`Đã lưu "${post.title}" vào danh sách đọc.`);
           }}
         >
-          <svg
-            viewBox="0 0 24 24"
-            fill={isSaved ? "currentColor" : "none"}
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinejoin="round"
+          <Bookmark
             className="w-4 h-4"
-          >
-            <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2Z" />
-          </svg>
+            fill={isSaved ? "currentColor" : "none"}
+            strokeWidth={1.8}
+          />
           {isSaved ? " Đã lưu" : " Lưu"}
         </button>
         <button
           type="button"
-          className="min-w-10 h-10 grid place-items-center border border-border font-mono text-[.78rem] transition-[.25s] px-[.6rem] hover:bg-foreground hover:text-background hover:border-foreground"
+          className="min-w-10 h-10 grid place-items-center border border-border font-mono text-[.78rem] transition-[.25s] px-[.6rem] hover:bg-foreground hover:text-background hover:border-foreground cursor-pointer"
           aria-label="Chép liên kết bài viết"
           onClick={() => {
             const url = `${window.location.origin}/bai-viet/${post.no}`;
@@ -258,19 +253,7 @@ export default function PostDetail({ post }: { post: Post }) {
               .then(() => toast("Đã chép liên kết bài viết vào clipboard."));
           }}
         >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="w-4 h-4"
-          >
-            <path d="M9 17H7A5 5 0 0 1 7 7h2" />
-            <path d="M15 7h2a5 5 0 1 1 0 10h-2" />
-            <path d="M8 12h8" />
-          </svg>
+          <Link2 className="w-4 h-4" strokeWidth={1.8} />
         </button>
       </div>
 

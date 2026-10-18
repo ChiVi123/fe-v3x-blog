@@ -1,9 +1,11 @@
 "use client";
 
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { useEffect } from "react";
-import PostRow from "~/components/post-row";
-import { type Author, getAuthorInitials, type Post } from "~/lib/data";
+import PostRow from "~/components/shared/post-row";
+import { useRevealOnScroll } from "~/hooks/use-reveal-on-scroll";
+import { getAuthorInitials } from "~/lib/data";
+import type { Author, Post } from "~/types";
 
 export default function AuthorDetail({
   author,
@@ -16,23 +18,7 @@ export default function AuthorDetail({
   const ini = getAuthorInitials(author.name);
   const shortName = author.name.split(" ").slice(-1)[0] ?? author.name;
 
-  useEffect(() => {
-    const io = new IntersectionObserver(
-      (es) => {
-        for (const e of es) {
-          if (e.isIntersecting) {
-            e.target.classList.add("in");
-            io.unobserve(e.target);
-          }
-        }
-      },
-      { threshold: 0.12 },
-    );
-    document.querySelectorAll(".reveal:not(.in)").forEach((el) => {
-      io.observe(el);
-    });
-    return () => io.disconnect();
-  }, []);
+  useRevealOnScroll(list.length);
 
   return (
     <div
@@ -44,18 +30,7 @@ export default function AuthorDetail({
         href="/bai-viet"
         className="inline-flex items-center gap-[.6rem] font-mono text-[.7rem] tracking-[.12em] uppercase px-[1.4rem] py-[.9rem] border border-foreground mb-[2.4rem] transition-[.3s] hover:bg-foreground hover:text-background"
       >
-        <svg
-          className="w-3.5 h-3.5"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="m12 19-7-7 7-7" />
-          <path d="M19 12H5" />
-        </svg>
+        <ArrowLeft className="w-3.5 h-3.5" strokeWidth={2} />
         Tất cả bài viết
       </Link>
 

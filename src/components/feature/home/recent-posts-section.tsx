@@ -1,0 +1,47 @@
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
+import PostRow from "~/components/shared/post-row";
+import type { Post } from "~/types";
+
+export function RecentPostsSection({ posts }: { posts: Post[] }) {
+  return (
+    <section className="sec" id="home-posts">
+      <div className="wrapper">
+        <div className="sec-head reveal flex justify-between items-end gap-6 flex-wrap border-b border-foreground pb-[1.3rem] mb-[.4rem]">
+          <div className="flex items-baseline gap-4">
+            <span className="font-mono text-[.72rem] tracking-widest text-son">
+              (01)
+            </span>
+            <h2
+              className="font-serif font-medium tracking-[-0.01em]"
+              style={{
+                fontVariationSettings: '"opsz" 100',
+                fontSize: "clamp(1.8rem,3.4vw,2.7rem)",
+              }}
+            >
+              Bài viết mới
+            </h2>
+          </div>
+          <span className="font-mono text-[.66rem] tracking-[.12em] uppercase text-muted-foreground">
+            {posts.length} bài · cập nhật 12.06
+          </span>
+        </div>
+        <div id="homeList">
+          {posts.slice(0, 4).map((p, i) => (
+            <PostRow key={p.no} post={p} index={i} />
+          ))}
+          <Link
+            href="/bai-viet"
+            className="group flex justify-center items-center gap-[.7rem] px-[1.2rem] mx-[-1.2rem] py-6 border-t border-border font-mono text-[.7rem] tracking-[.13em] uppercase transition-[.3s] hover:bg-foreground hover:text-background"
+          >
+            Tất cả {posts.length} bài viết
+            <ArrowRight
+              className="w-3.5 h-3.5 transition-[transform_.3s] group-hover:translate-x-0.75"
+              strokeWidth={2}
+            />
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
