@@ -59,6 +59,7 @@ export default function RootLayout({
     <html
       lang="vi"
       className={`${sans.variable} ${serif.variable} ${mono.variable}`}
+      suppressHydrationWarning
     >
       <body className="grain min-h-dvh flex flex-col">
         <ThemeProvider
