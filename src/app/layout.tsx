@@ -1,12 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import { Be_Vietnam_Pro, Fraunces, IBM_Plex_Mono } from "next/font/google";
 import { type ReactNode, Suspense } from "react";
-import { HoverPreview } from "~/components/post-row";
-import { ReadingStoreProvider } from "~/components/reading-store";
-import SiteFooter from "~/components/site-footer";
-import SiteHeader from "~/components/site-header";
-import { ThemeProvider } from "~/components/theme-provider";
-import { ResumeBar, ToastContainer } from "~/components/toast";
+import SiteFooter from "~/components/layouts/site-footer";
+import SiteHeader from "~/components/layouts/site-header";
+import { HoverPreview } from "~/components/shared/hover-preview";
+import { ReadingStoreProvider } from "~/components/shared/reading-provider";
+import { ResumeBar } from "~/components/shared/resume-bar";
+import { ScrollReveal } from "~/components/shared/scroll-reveal";
+import { ThemeProvider } from "~/components/shared/theme-provider";
+import { ToastContainer } from "~/components/shared/toast";
 import "./globals.css";
 
 /* Ba họ font của TẠP. */
@@ -92,6 +94,7 @@ export default function RootLayout({
             <ToastContainer />
             <ResumeBar />
             <HoverPreview />
+            <ScrollReveal />
           </ReadingStoreProvider>
         </ThemeProvider>
       </body>

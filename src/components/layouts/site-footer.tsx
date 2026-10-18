@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowUp } from "lucide-react";
 import Link from "next/link";
 import { authors } from "~/lib/data";
 
@@ -98,22 +99,11 @@ export default function SiteFooter() {
           <span>Mọi bài viết là hư cấu</span>
           <button
             type="button"
-            className="inline-flex items-center gap-2 transition-[color_.25s] hover:text-son"
+            className="inline-flex items-center gap-2 transition-[color_.25s] hover:text-son cursor-pointer"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           >
             Về đầu trang
-            <svg
-              className="w-3.25 h-3.25"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="m5 12 7-7 7 7" />
-              <path d="M12 19V5" />
-            </svg>
+            <ArrowUp className="w-3.25 h-3.25" strokeWidth={2} />
           </button>
         </div>
       </div>

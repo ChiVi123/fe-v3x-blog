@@ -1,11 +1,12 @@
 "use client";
 
+import { Bookmark, Moon, Search, Sun, X } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { useReadingStore } from "~/hooks/use-reading-store";
 import { authors, posts } from "~/lib/data";
 import { deaccent } from "~/lib/utils";
-import { useReadingStore } from "./reading-store";
 
 /* ─── SearchOverlay ─── */
 function SearchOverlay({
@@ -15,6 +16,7 @@ function SearchOverlay({
   open: boolean;
   onClose: () => void;
 }) {
+  const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [q, setQ] = useState("");
   const [results, setResults] = useState(posts.slice(0, 4));
@@ -66,7 +68,7 @@ function SearchOverlay({
   function go(no: string) {
     addRecent(q);
     onClose();
-    window.location.href = `/bai-viet/${no}`;
+    router.push(`/bai-viet/${no}`);
   }
 
   if (!open) return null;
@@ -90,17 +92,10 @@ function SearchOverlay({
       <div className="relative max-w-165 mx-4 mt-[11vh] bg-background border border-foreground shadow-[0_30px_80px_rgba(0,0,0,.4)] animate-[panel_.35s_cubic-bezier(.22,1,.36,1)_both]">
         {/* head */}
         <div className="flex items-center gap-[.9rem] px-5 py-[1.05rem] border-b border-foreground">
-          <svg
+          <Search
             className="w-4.75 h-4.75 text-son shrink-0"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.35-4.35" />
-          </svg>
+            strokeWidth={1.8}
+          />
           <input
             ref={inputRef}
             id="searchInput"
@@ -114,21 +109,12 @@ function SearchOverlay({
             }}
           />
           <button
-            className="w-8.5 h-8.5 grid place-items-center border border-border transition-[border-color_.25s] hover:border-foreground"
+            type="button"
+            className="w-8.5 h-8.5 grid place-items-center border border-border transition-[border-color_.25s] hover:border-foreground cursor-pointer"
             onClick={onClose}
             aria-label="Đóng tìm kiếm"
           >
-            <svg
-              className="w-4 h-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-            >
-              <path d="M18 6 6 18" />
-              <path d="m6 6 12 12" />
-            </svg>
+            <X className="w-4 h-4" strokeWidth={1.8} />
           </button>
         </div>
         {/* hints */}
@@ -136,8 +122,9 @@ function SearchOverlay({
           <span>{q === "" && recents.length > 0 ? "Gần đây:" : "Thử:"}</span>
           {hints.map(([val, label]) => (
             <button
+              type="button"
               key={val}
-              className="font-mono text-[.64rem] tracking-[.08em] border border-border rounded-full px-[.8rem] py-[.32rem] text-muted-foreground transition-[.25s] hover:bg-foreground hover:border-foreground hover:text-background"
+              className="font-mono text-[.64rem] tracking-[.08em] border border-border rounded-full px-[.8rem] py-[.32rem] text-muted-foreground transition-[.25s] hover:bg-foreground hover:border-foreground hover:text-background cursor-pointer"
               onClick={() => {
                 handleSearch(val);
                 inputRef.current?.focus();
@@ -157,8 +144,9 @@ function SearchOverlay({
           ) : (
             results.map((p) => (
               <button
+                type="button"
                 key={p.no}
-                className="flex justify-between items-center gap-4 w-full text-left px-5 py-4 border-b border-border transition-[background_.25s] hover:bg-muted"
+                className="flex justify-between items-center gap-4 w-full text-left px-5 py-4 border-b border-border transition-[background_.25s] hover:bg-muted cursor-pointer"
                 onClick={() => go(p.no)}
               >
                 <span>
@@ -224,21 +212,12 @@ function MenuOverlay({
             TẠP<span style={{ color: "var(--son)" }}>.</span>
           </span>
           <button
-            className="w-9.5 h-9.5 grid place-items-center border border-inverse-border transition-[.25s] hover:border-son hover:text-son hover:rotate-90"
+            type="button"
+            className="w-9.5 h-9.5 grid place-items-center border border-inverse-border transition-[.25s] hover:border-son hover:text-son hover:rotate-90 cursor-pointer"
             onClick={onClose}
             aria-label="Đóng mục lục"
           >
-            <svg
-              className="w-4 h-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-            >
-              <path d="M18 6 6 18" />
-              <path d="m6 6 12 12" />
-            </svg>
+            <X className="w-4 h-4" strokeWidth={2} />
           </button>
         </div>
         <nav className="flex-1 pt-8">
@@ -322,32 +301,13 @@ function ThemeTogglePill() {
 
   return (
     <button
-      className="inline-flex items-center gap-[.6rem] border-[1.5px] border-inverse-border rounded-full px-[1.1rem] py-[.7rem] font-mono text-[.66rem] tracking-[.12em] uppercase text-inverse-muted transition-[.25s] hover:border-son hover:text-inverse-foreground"
+      type="button"
+      className="inline-flex items-center gap-[.6rem] border-[1.5px] border-inverse-border rounded-full px-[1.1rem] py-[.7rem] font-mono text-[.66rem] tracking-[.12em] uppercase text-inverse-muted transition-[.25s] hover:border-son hover:text-inverse-foreground cursor-pointer"
       onClick={toggle}
     >
-      <svg
-        className="w-3.25 h-3.25"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      >
-        <circle cx="12" cy="12" r="4" />
-        <path d="M12 2v2M12 20v2M2 12h2M20 12h2" />
-      </svg>
+      <Sun className="w-3.25 h-3.25" strokeWidth={2} />
       Giao diện <b className="text-son font-medium">{dark ? "Tối" : "Sáng"}</b>
-      <svg
-        className="w-3.25 h-3.25"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-      </svg>
+      <Moon className="w-3.25 h-3.25" strokeWidth={2} />
     </button>
   );
 }
@@ -370,32 +330,23 @@ function ThemeBtnHead() {
 
   return (
     <button
-      className="relative w-8.5 h-8.5 grid place-items-center border border-border transition-[border-color_.25s] hover:border-foreground theme-btn-head"
+      type="button"
+      className="relative w-8.5 h-8.5 grid place-items-center border border-border transition-[border-color_.25s] hover:border-foreground theme-btn-head cursor-pointer"
       onClick={toggle}
       aria-label="Đổi giao diện sáng / tối"
     >
-      <svg
-        className={`icon-moon w-4 h-4 absolute transition-[.45s_cubic-bezier(.5,1.6,.4,1)] ${dark ? "opacity-0 -rotate-90 scale-[.4]" : "opacity-100"}`}
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-      </svg>
-      <svg
-        className={`icon-sun w-4 h-4 absolute transition-[.45s_cubic-bezier(.5,1.6,.4,1)] ${dark ? "opacity-100" : "opacity-0 rotate-90 scale-[.4]"}`}
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      >
-        <circle cx="12" cy="12" r="4" />
-        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
-      </svg>
+      <Moon
+        className={`icon-moon w-4 h-4 absolute transition-[.45s_cubic-bezier(.5,1.6,.4,1)] ${
+          dark ? "opacity-0 -rotate-90 scale-[.4]" : "opacity-100"
+        }`}
+        strokeWidth={1.8}
+      />
+      <Sun
+        className={`icon-sun w-4 h-4 absolute transition-[.45s_cubic-bezier(.5,1.6,.4,1)] ${
+          dark ? "opacity-100" : "opacity-0 rotate-90 scale-[.4]"
+        }`}
+        strokeWidth={1.8}
+      />
     </button>
   );
 }
@@ -456,7 +407,8 @@ export default function SiteHeader() {
         <div className="wrapper flex items-center gap-[1.6rem] h-(--header-h)">
           {/* burger (mobile) */}
           <button
-            className="burger-btn md:hidden flex-col gap-1 w-5 p-1 flex"
+            type="button"
+            className="burger-btn md:hidden flex-col gap-1 w-5 p-1 flex cursor-pointer"
             style={{ display: "flex" }}
             id="menuBtn"
             onClick={() => setMenuOpen(true)}
@@ -505,22 +457,13 @@ export default function SiteHeader() {
           {/* actions */}
           <div className="head-actions flex items-center gap-[.9rem] ml-auto">
             <button
+              type="button"
               id="searchBtn"
-              className="flex items-center gap-2 font-mono text-[.68rem] tracking-widest uppercase text-muted-foreground px-[.6rem] py-[.45rem] transition-[color_.25s] hover:text-foreground"
+              className="flex items-center gap-2 font-mono text-[.68rem] tracking-widest uppercase text-muted-foreground px-[.6rem] py-[.45rem] transition-[color_.25s] hover:text-foreground cursor-pointer"
               onClick={() => setSearchOpen(true)}
               aria-label="Tìm kiếm"
             >
-              <svg
-                className="w-3.75 h-3.75"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.35-4.35" />
-              </svg>
+              <Search className="w-3.75 h-3.75" strokeWidth={1.8} />
               <span className="hidden sm:inline">Tìm kiếm</span>
               <kbd className="hidden sm:inline font-mono text-[.62rem] border border-border rounded-[3px] px-[.34rem] py-[.08rem] text-muted-foreground">
                 /
@@ -532,16 +475,7 @@ export default function SiteHeader() {
               className="relative w-8.5 h-8.5 grid place-items-center border border-border transition-[border-color_.25s] hover:border-foreground"
               aria-label="Bài đã lưu"
             >
-              <svg
-                className="w-4 h-4"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinejoin="round"
-              >
-                <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2Z" />
-              </svg>
+              <Bookmark className="w-4 h-4" strokeWidth={1.8} />
               {mounted && savedCount > 0 && (
                 <span className="absolute -top-1.75 -right-1.75 min-w-4 h-4 rounded-full bg-son text-white font-mono font-semibold text-[9px] leading-4 text-center px-1">
                   {savedCount}
