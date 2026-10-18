@@ -2,7 +2,7 @@ import AuthorDetail from "~/components/feature/tac-gia/author-detail";
 import { authors, getPostsByAuthor } from "~/lib/data";
 import { createMockApi } from "~/lib/utils";
 
-const getAuthorPostsApi = createMockApi(getPostsByAuthor, 2000);
+const getAuthorPostsApi = createMockApi(getPostsByAuthor);
 
 async function AuthorContent({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

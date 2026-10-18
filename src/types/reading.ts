@@ -13,6 +13,7 @@ export interface ReadingState {
 }
 
 export type ReadingAction =
+  | { type: "HYDRATE"; state: ReadingState }
   | { type: "TOGGLE_SAVE"; no: string }
   | { type: "SET_PROGRESS"; no: string; pct: number }
   | { type: "SET_LAST_READ"; no: string; pct: number }

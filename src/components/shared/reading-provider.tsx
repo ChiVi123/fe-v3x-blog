@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useMemo, useReducer } from "react";
+import { createContext, useEffect, useMemo, useReducer } from "react";
 import type { ReadingAction, ReadingState, ReadMap } from "~/types";
 
 /* ─── LocalStorage helpers ─── */
@@ -35,8 +35,20 @@ function loadState(): ReadingState {
   };
 }
 
+/* State mặc định giống nhau trên server và client */
+function createInitialState(): ReadingState {
+  return {
+    savedSet: new Set<string>(),
+    readMap: {},
+    lastRead: null,
+    fsLvl: 1,
+  };
+}
+
 function reducer(state: ReadingState, action: ReadingAction): ReadingState {
   switch (action.type) {
+    case "HYDRATE":
+      return action.state;
     case "TOGGLE_SAVE": {
       const next = new Set(state.savedSet);
       if (next.has(action.no)) next.delete(action.no);
@@ -79,7 +91,11 @@ export function ReadingStoreProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [state, dispatch] = useReducer(reducer, undefined, loadState);
+  const [state, dispatch] = useReducer(reducer, undefined, createInitialState);
+
+  useEffect(() => {
+    dispatch({ type: "HYDRATE", state: loadState() });
+  }, []);
 
   const value = useMemo(() => ({ state, dispatch }), [state]);
 
