@@ -30,7 +30,7 @@ export default function ArchiveContent() {
   const visible = list.slice(0, shown);
   const remain = list.length - shown;
 
-  useRevealOnScroll(filter);
+  useRevealOnScroll(`${filter}:${shown}`);
 
   return (
     <div className="wrapper" style={{ paddingTop: "clamp(2.2rem,5vw,3.4rem)" }}>
