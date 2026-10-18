@@ -4,6 +4,7 @@ import { NewsletterSection } from "~/components/feature/home/newsletter-section"
 import { QuoteSection } from "~/components/feature/home/quote-section";
 import { RecentPostsSection } from "~/components/feature/home/recent-posts-section";
 import { TopicsSection } from "~/components/feature/home/topics-section";
+import { ScrollReveal } from "~/components/shared/scroll-reveal";
 import { posts } from "~/lib/data";
 
 export default function HomePage() {
@@ -17,6 +18,7 @@ export default function HomePage() {
       <TopicsSection />
       <QuoteSection />
       <NewsletterSection />
+      <ScrollReveal />
 
       <style>{`
         .sec { padding-block: clamp(4rem,9vw,7rem); }

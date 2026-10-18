@@ -6,7 +6,6 @@ import SiteHeader from "~/components/layouts/site-header";
 import { HoverPreview } from "~/components/shared/hover-preview";
 import { ReadingStoreProvider } from "~/components/shared/reading-provider";
 import { ResumeBar } from "~/components/shared/resume-bar";
-import { ScrollReveal } from "~/components/shared/scroll-reveal";
 import { ThemeProvider } from "~/components/shared/theme-provider";
 import { ToastContainer } from "~/components/shared/toast";
 import "./globals.css";
@@ -60,7 +59,6 @@ export default function RootLayout({
     <html
       lang="vi"
       className={`${sans.variable} ${serif.variable} ${mono.variable}`}
-      suppressHydrationWarning
     >
       <body className="grain min-h-dvh flex flex-col">
         <ThemeProvider
@@ -94,7 +92,6 @@ export default function RootLayout({
             <ToastContainer />
             <ResumeBar />
             <HoverPreview />
-            <ScrollReveal />
           </ReadingStoreProvider>
         </ThemeProvider>
       </body>
