@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   experimental: {
     agentFeedback: true,
   },
+  images: {
+    remotePatterns: [{ protocol: "https", hostname: "picsum.photos" }],
+  },
   cacheComponents: true,
   partialPrefetching: true,
   reactCompiler: true,
