@@ -58,6 +58,7 @@ export default function RootLayout({
   return (
     <html
       lang="vi"
+      data-scroll-behavior="smooth"
       className={`${sans.variable} ${serif.variable} ${mono.variable}`}
       suppressHydrationWarning
     >
