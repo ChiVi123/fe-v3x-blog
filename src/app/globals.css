@@ -61,6 +61,7 @@
   --color-inverse-foreground: var(--inverse-foreground);
   --color-inverse-muted: var(--inverse-muted);
   --color-inverse-border: var(--inverse-border);
+  --color-skeleton: var(--skeleton);
 
   /* Góc vuông: --radius = 0 nên toàn bộ rounded-* của shadcn về 0.
      Chip lọc / chấm tròn dùng rounded-full (không phụ thuộc --radius). */
@@ -172,6 +173,8 @@
   --inverse-muted: oklch(0.959 0.013 86.8 / 55%);
   --inverse-border: oklch(0.959 0.013 86.8 / 16%);
 
+  --skeleton: oklch(0.195 0.01 67.2 / 9%);
+
   --header-h: 3.875rem;
 }
 
@@ -218,6 +221,8 @@
   --inverse-foreground: oklch(0.929 0.019 86.1);
   --inverse-muted: oklch(0.929 0.019 86.1 / 50%);
   --inverse-border: oklch(0.929 0.019 86.1 / 14%);
+
+  --skeleton: oklch(0.929 0.019 86.1 / 10%);
 }
 
 /* ── Nền tảng ───────────────────────────────────────────────── */
