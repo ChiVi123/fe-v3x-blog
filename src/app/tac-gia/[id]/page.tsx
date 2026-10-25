@@ -2,11 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import AuthorContent from "~/components/feature/tac-gia/author-content";
 import AuthorLoading from "~/components/feature/tac-gia/author-loading";
-import { authors } from "~/lib/data";
-
-export function generateStaticParams() {
-  return Object.keys(authors).map((id) => ({ id }));
-}
+import { getAuthorById } from "~/service/server/author.service";
 
 export async function generateMetadata({
   params,
@@ -14,12 +10,12 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const author = authors[id];
+  const author = await getAuthorById(id);
   if (!author) return { title: "Không tìm thấy tác giả" };
 
   return {
-    title: `${author.name} — Tác giả TẠP.`,
-    description: author.bio,
+    title: `${author.username} — Tác giả TẠP.`,
+    description: "A jump to the sky, turn the rider kick",
   };
 }
 

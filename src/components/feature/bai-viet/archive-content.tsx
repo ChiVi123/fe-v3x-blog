@@ -5,28 +5,36 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import PostRow from "~/components/shared/post-row";
 import { useRevealOnScroll } from "~/hooks/use-reveal-on-scroll";
-import { CATS, posts } from "~/lib/data";
+import type { Category, PostRow as PostRowType } from "~/types";
 
 const PAGE0 = 5;
 const STEP = 4;
 
-export default function ArchiveContent() {
+export default function ArchiveContent({
+  posts,
+  categories,
+}: {
+  posts: PostRowType[];
+  categories: Category[];
+}) {
   const searchParams = useSearchParams();
   const urlCat = searchParams.get("cat") ?? "Tất cả";
   const [filter, setFilter] = useState(
-    CATS.includes(urlCat) ? urlCat : "Tất cả",
+    categories.map((c) => c.name).includes(urlCat) ? urlCat : "Tất cả",
   );
   const [shown, setShown] = useState(PAGE0);
 
   // Sync filter when URL search param changes
   useEffect(() => {
     const cat = searchParams.get("cat") ?? "Tất cả";
-    setFilter(CATS.includes(cat) ? cat : "Tất cả");
+    setFilter(categories.map((c) => c.name).includes(cat) ? cat : "Tất cả");
     setShown(PAGE0);
-  }, [searchParams]);
+  }, [searchParams, categories]);
 
   const list =
-    filter === "Tất cả" ? posts : posts.filter((p) => p.cat === filter);
+    filter === "Tất cả"
+      ? posts
+      : posts.filter((p) => p.category.name === filter);
   const visible = list.slice(0, shown);
   const remain = list.length - shown;
 
@@ -63,29 +71,29 @@ export default function ArchiveContent() {
         role="tablist"
         aria-label="Lọc theo chuyên mục"
       >
-        {CATS.map((cat) => {
+        {categories.map((cat) => {
           const n =
-            cat === "Tất cả"
+            cat.name === "Tất cả"
               ? posts.length
-              : posts.filter((p) => p.cat === cat).length;
+              : posts.filter((p) => p.category.name === cat.name).length;
           return (
             <button
-              key={cat}
+              key={cat.id}
               type="button"
               role="tab"
-              aria-selected={cat === filter}
+              aria-selected={cat.name === filter}
               className={`font-mono text-[.64rem] tracking-[.09em] uppercase px-[.95rem] py-[.45rem] border rounded-full transition-[.25s] cursor-pointer ${
-                cat === filter
+                cat.name === filter
                   ? "bg-foreground text-background border-foreground"
                   : "border-border text-muted-foreground hover:border-foreground hover:text-foreground"
               }`}
               onClick={() => {
-                setFilter(cat);
+                setFilter(cat.name);
                 setShown(PAGE0);
                 window.scrollTo({ top: 0 });
               }}
             >
-              {cat} <span className="opacity-55">({n})</span>
+              {cat.name} <span className="opacity-55">({n})</span>
             </button>
           );
         })}
@@ -94,7 +102,7 @@ export default function ArchiveContent() {
       {/* Post rows */}
       <div id="archRows">
         {visible.map((p, i) => (
-          <PostRow key={p.no} post={p} index={i} />
+          <PostRow key={p.id} post={p} index={i} />
         ))}
       </div>
 

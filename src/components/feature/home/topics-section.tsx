@@ -1,6 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
-import { CATS, posts, TOPIC_META } from "~/lib/data";
 
 export function TopicsSection() {
   return (
@@ -26,9 +25,8 @@ export function TopicsSection() {
           </span>
         </div>
         <div>
-          {CATS.slice(1).map((cat, i) => {
-            const n = posts.filter((p) => p.cat === cat).length;
-            return (
+          {["Công nghệ", "Phát triển bản thân", "Đời sống", "Xã hội"].map(
+            (cat, i) => (
               <Link
                 key={cat}
                 href={`/bai-viet?cat=${encodeURIComponent(cat)}`}
@@ -53,19 +51,17 @@ export function TopicsSection() {
                   >
                     {cat}
                   </span>
-                  <span className="block text-[.9rem] text-muted-foreground mt-[.3rem] transition-[color_.35s] group-hover:text-inverse-foreground sm:hidden md:block">
-                    {TOPIC_META[cat]}
-                  </span>
+                  <span className="block text-[.9rem] text-muted-foreground mt-[.3rem] transition-[color_.35s] group-hover:text-inverse-foreground sm:hidden md:block"></span>
                 </span>
                 <span className="font-mono text-[.68rem] tracking-widest text-muted-foreground whitespace-nowrap transition-[color_.35s] group-hover:text-son">
-                  {n} bài
+                  0 bài
                 </span>
                 <span className="w-9.5 h-9.5 grid place-items-center border border-border text-muted-foreground transition-[.35s] group-hover:bg-inverse-foreground group-hover:border-inverse-foreground group-hover:text-foreground group-hover:rotate-45">
                   <ArrowUpRight className="w-3.5 h-3.5" strokeWidth={1.8} />
                 </span>
               </Link>
-            );
-          })}
+            ),
+          )}
         </div>
       </div>
     </section>

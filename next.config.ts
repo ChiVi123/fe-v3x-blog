@@ -6,7 +6,10 @@ const nextConfig: NextConfig = {
     agentFeedback: true,
   },
   images: {
-    remotePatterns: [{ protocol: "https", hostname: "picsum.photos" }],
+    remotePatterns: [
+      { protocol: "https", hostname: "picsum.photos" },
+      { hostname: "res.cloudinary.com" },
+    ],
   },
   cacheComponents: true,
   partialPrefetching: true,

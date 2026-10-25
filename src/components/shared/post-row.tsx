@@ -4,10 +4,11 @@ import { cn } from "cn";
 import { ArrowUpRight, X } from "lucide-react";
 import Link from "next/link";
 import { useReadingStore } from "~/hooks/use-reading-store";
-import type { Post } from "~/types";
+import { dateFormat } from "~/lib/utils";
+import type { PostRow as PostRowType } from "~/types";
 
 export interface PostRowProps {
-  post: Post;
+  post: PostRowType;
   index?: number;
   /** In saved view: show unsave button instead of arrow */
   showUnsave?: boolean;
@@ -20,12 +21,12 @@ export default function PostRow({
   showUnsave = false,
   onUnsave,
 }: PostRowProps) {
-  const readPct = useReadingStore((s) => s.readMap[post.no] ?? 0);
+  const readPct = useReadingStore((s) => s.readMap[post.id] ?? 0);
   const isRead = readPct >= 0.95;
 
   return (
     <Link
-      href={`/bai-viet/${post.no}`}
+      href={`/bai-viet/${post.slug}`}
       className={cn(
         "row group grid items-center gap-[1.4rem] px-[1.2rem] mx-[-1.2rem] border-t border-border cursor-pointer transition-[background_.3s] hover:bg-muted",
         { read: isRead },
@@ -35,7 +36,8 @@ export default function PostRow({
         padding: "1.55rem 1.2rem",
         animationDelay: `${index * 60}ms`,
       }}
-      data-no={post.no}
+      data-id={post.id}
+      data-img={post.thumbnail.url}
     >
       {/* № */}
       <span
@@ -44,12 +46,12 @@ export default function PostRow({
           { "line-through opacity-45": isRead },
         )}
       >
-        № {post.no}
+        № {index + 1}
       </span>
 
       {/* category */}
       <span className="font-mono text-[.63rem] tracking-[.13em] uppercase text-son">
-        {post.cat}
+        {post.category?.name || "Unknown"}
       </span>
 
       {/* title */}
@@ -62,7 +64,7 @@ export default function PostRow({
 
       {/* meta */}
       <span className="font-mono text-[.66rem] tracking-[.06em] text-muted-foreground whitespace-nowrap">
-        {post.date} · {post.read} phút
+        {dateFormat(post.createdAt)} · NaN phút
         {isRead && <em className="not-italic text-son"> · đã đọc</em>}
       </span>
 
@@ -73,7 +75,7 @@ export default function PostRow({
           className="w-8.5 h-8.5 grid place-items-center border border-son text-son transition-[.3s] hover:bg-son hover:text-white cursor-pointer"
           onClick={(e) => {
             e.preventDefault();
-            onUnsave?.(post.no);
+            onUnsave?.(post.id);
           }}
           aria-label="Bỏ lưu bài này"
         >

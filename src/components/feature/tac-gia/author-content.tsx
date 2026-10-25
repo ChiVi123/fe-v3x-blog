@@ -1,13 +1,15 @@
 import AuthorDetail from "~/components/feature/tac-gia/author-detail";
-import { authors, getPostsByAuthor } from "~/lib/data";
-import { createMockApi } from "~/lib/utils";
-
-const getAuthorPostsApi = createMockApi(getPostsByAuthor);
+import { getAuthorById } from "~/service/server/author.service";
+import { queryPosts } from "~/service/server/posts.service";
 
 async function AuthorContent({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const posts = await getAuthorPostsApi(id);
-  return <AuthorDetail list={posts} author={authors[id]} />;
+  const [author, { data: posts }] = await Promise.all([
+    getAuthorById(id),
+    queryPosts({ author: id }),
+  ]);
+
+  return <AuthorDetail author={author} list={posts} />;
 }
 
 export default AuthorContent;

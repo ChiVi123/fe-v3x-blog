@@ -1,5 +1,4 @@
 import { Asterisk } from "lucide-react";
-import { posts } from "~/lib/data";
 
 export function Marquee() {
   const items = [
@@ -7,7 +6,7 @@ export function Marquee() {
     "Sách & Đọc",
     "Đời thường",
     "Xã hội",
-    `${posts.length} bài viết`,
+    `NaN bài viết`,
     "Từ 2021",
     "Hà Nội",
   ];

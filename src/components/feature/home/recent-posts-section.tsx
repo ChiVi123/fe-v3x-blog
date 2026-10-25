@@ -1,9 +1,11 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import PostRow from "~/components/shared/post-row";
-import type { Post } from "~/types";
+import { dateFormat } from "~/lib/utils";
+import type { PostRow as PostRowType } from "~/types";
 
-export function RecentPostsSection({ posts }: { posts: Post[] }) {
+export function RecentPostsSection({ posts }: { posts: PostRowType[] }) {
+  const latestPost = posts[0];
   return (
     <section className="sec" id="home-posts">
       <div className="wrapper">
@@ -23,12 +25,13 @@ export function RecentPostsSection({ posts }: { posts: Post[] }) {
             </h2>
           </div>
           <span className="font-mono text-[.66rem] tracking-[.12em] uppercase text-muted-foreground">
-            {posts.length} bài · cập nhật 12.06
+            {posts.length} bài · cập nhật{" "}
+            {dateFormat(latestPost.createdAt, "short")}
           </span>
         </div>
         <div id="homeList">
           {posts.slice(0, 4).map((p, i) => (
-            <PostRow key={p.no} post={p} index={i} />
+            <PostRow key={p.id} post={p} index={i} />
           ))}
           <Link
             href="/bai-viet"

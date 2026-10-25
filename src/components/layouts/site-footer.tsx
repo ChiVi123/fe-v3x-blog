@@ -2,7 +2,6 @@
 
 import { ArrowUp } from "lucide-react";
 import Link from "next/link";
-import { authors } from "~/lib/data";
 
 export default function SiteFooter() {
   return (
@@ -58,13 +57,18 @@ export default function SiteFooter() {
             <h4 className="font-mono font-medium text-[.62rem] tracking-[.18em] uppercase text-inverse-muted mb-4">
               Tác giả
             </h4>
-            {Object.entries(authors).map(([id, a]) => (
+            {(
+              [["123", { username: "admin" }]] as [
+                string,
+                { username: string },
+              ][]
+            ).map(([id, a]) => (
               <Link
                 key={id}
                 href={`/tac-gia/${id}`}
                 className="block py-[.28rem] text-[.92rem] text-inverse-muted transition-[color_.25s] hover:text-son"
               >
-                {a.name}
+                {a.username}
               </Link>
             ))}
           </div>

@@ -1,6 +1,6 @@
 import { useCallback, useContext } from "react";
 import { ReadingStoreContext } from "~/components/shared/reading-provider";
-import type { ReadingState } from "~/types";
+import type { PostRow, ReadingState } from "~/types";
 
 export function useReadingStore<T>(selector: (s: ReadingState) => T): T {
   const ctx = useContext(ReadingStoreContext);
@@ -20,15 +20,17 @@ export function useReadingActions() {
   const { dispatch } = ctx;
 
   const toggleSave = useCallback(
-    (no: string) => dispatch({ type: "TOGGLE_SAVE", no }),
+    (post: PostRow) => dispatch({ type: "TOGGLE_SAVE", post }),
     [dispatch],
   );
   const setProgress = useCallback(
-    (no: string, pct: number) => dispatch({ type: "SET_PROGRESS", no, pct }),
+    (post: PostRow, pct: number) =>
+      dispatch({ type: "SET_PROGRESS", post, pct }),
     [dispatch],
   );
   const setLastRead = useCallback(
-    (no: string, pct: number) => dispatch({ type: "SET_LAST_READ", no, pct }),
+    (post: PostRow, pct: number) =>
+      dispatch({ type: "SET_LAST_READ", post, pct }),
     [dispatch],
   );
   const clearLastRead = useCallback(

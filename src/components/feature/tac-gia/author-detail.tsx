@@ -4,19 +4,18 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import PostRow from "~/components/shared/post-row";
 import { useRevealOnScroll } from "~/hooks/use-reveal-on-scroll";
-import { getAuthorInitials } from "~/lib/data";
-import type { Author, Post } from "~/types";
+import { getAuthorInitials } from "~/lib/utils";
+import type { Author, PostRow as PostRowType } from "~/types";
 
 export default function AuthorDetail({
   author,
   list,
 }: {
   author: Author;
-  list: Post[];
+  list: PostRowType[];
 }) {
-  const mins = list.reduce((s, p) => s + p.read, 0);
-  const ini = getAuthorInitials(author.name);
-  const shortName = author.name.split(" ").slice(-1)[0] ?? author.name;
+  const ini = getAuthorInitials(author.username);
+  const shortName = author.username.split(" ").slice(-1)[0] ?? author.username;
 
   useRevealOnScroll(list.length);
 
@@ -59,16 +58,16 @@ export default function AuthorDetail({
               fontSize: "clamp(2rem,5vw,3.2rem)",
             }}
           >
-            {author.name}
+            {author.username}
           </h1>
           <p className="font-mono text-[.6rem] tracking-[.16em] uppercase text-son">
-            {author.role}
+            Role
           </p>
           <p className="max-w-[52ch] leading-[1.75] text-muted-foreground mt-[.8rem] mb-[1.1rem] text-[1rem]">
-            {author.bio}
+            Bio
           </p>
           <p className="font-mono text-[.68rem] tracking-[.12em] uppercase text-son">
-            {list.length} bài viết · {mins} phút đọc trên TẠP
+            {list.length} bài viết · NaN phút đọc trên TẠP
           </p>
         </div>
       </header>
@@ -90,7 +89,7 @@ export default function AuthorDetail({
       </div>
       <div>
         {list.map((p, i) => (
-          <PostRow key={p.no} post={p} index={i} />
+          <PostRow key={p.id} post={p} index={i} />
         ))}
       </div>
 

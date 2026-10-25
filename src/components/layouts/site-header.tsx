@@ -8,8 +8,8 @@ import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 import { Skeleton } from "~/components/ui/skeleton";
 import { useReadingStore } from "~/hooks/use-reading-store";
-import { authors, posts } from "~/lib/data";
-import { deaccent } from "~/lib/utils";
+import { dateFormat } from "~/lib/utils";
+import type { PostRow } from "~/types";
 
 /* ─── SearchOverlay ─── */
 function SearchOverlay({
@@ -22,7 +22,7 @@ function SearchOverlay({
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [q, setQ] = useState("");
-  const [results, setResults] = useState(posts.slice(0, 4));
+  const [results, _setResults] = useState<PostRow[]>([]);
   const [recents, setRecents] = useState<string[]>([]);
 
   const SUG = [
@@ -44,19 +44,11 @@ function SearchOverlay({
     if (open) {
       setTimeout(() => inputRef.current?.focus(), 60);
       setQ("");
-      setResults(posts.slice(0, 4));
     }
   }, [open]);
 
   function handleSearch(v: string) {
     setQ(v);
-    setResults(
-      v
-        ? posts.filter((p) =>
-            deaccent(`${p.title} ${p.cat}`).includes(deaccent(v)),
-          )
-        : posts.slice(0, 4),
-    );
   }
 
   function addRecent(query: string) {
@@ -68,10 +60,10 @@ function SearchOverlay({
     } catch {}
   }
 
-  function go(no: string) {
+  function go(slug: string) {
     addRecent(q);
     onClose();
-    router.push(`/bai-viet/${no}`);
+    router.push(`/bai-viet/${slug}`);
   }
 
   if (!open) return null;
@@ -108,7 +100,7 @@ function SearchOverlay({
             value={q}
             onChange={(e) => handleSearch(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter" && results.length) go(results[0].no);
+              if (e.key === "Enter" && results.length) go(results[0].slug);
             }}
           />
           <button
@@ -148,20 +140,20 @@ function SearchOverlay({
             results.map((p) => (
               <button
                 type="button"
-                key={p.no}
+                key={p.id}
                 className="flex justify-between items-center gap-4 w-full text-left px-5 py-4 border-b border-border transition-[background_.25s] hover:bg-muted cursor-pointer"
-                onClick={() => go(p.no)}
+                onClick={() => go(p.slug)}
               >
                 <span>
                   <span className="block font-mono text-[.6rem] tracking-[.13em] uppercase text-son mb-1">
-                    {p.cat} · № {p.no}
+                    {p.category.name} · № NaN
                   </span>
                   <span className="font-serif font-medium text-[1.05rem]">
                     {p.title}
                   </span>
                 </span>
                 <span className="font-mono text-[.64rem] text-muted-foreground whitespace-nowrap">
-                  {p.date} · {p.read}'
+                  {dateFormat(p.createdAt)} · NaN'Đọc
                 </span>
               </button>
             ))
@@ -230,7 +222,7 @@ function MenuOverlay({
           </Link>
           <Link href="/bai-viet" className="menu-m-link" onClick={onClose}>
             <span>Bài viết</span>
-            <span className="menu-m-cnt">{posts.length}</span>
+            <span className="menu-m-cnt">NaN</span>
           </Link>
           <Link href="/da-luu" className="menu-m-link" onClick={onClose}>
             <span>Đã lưu</span>
@@ -247,25 +239,23 @@ function MenuOverlay({
               onClick={onClose}
             >
               <span>{cat}</span>
-              <span className="menu-m-cnt">
-                {posts.filter((p) => p.cat === cat).length}
-              </span>
+              <span className="menu-m-cnt">NaN</span>
             </Link>
           ))}
           <p className="font-mono text-[.6rem] tracking-[.22em] uppercase text-inverse-muted mt-[1.8rem] mb-[.3rem]">
             Tác giả
           </p>
-          {Object.entries(authors).map(([id, a]) => (
+          {(
+            [["123", { username: "admin" }]] as [string, { username: string }][]
+          ).map(([id, a]) => (
             <Link
               key={id}
               href={`/tac-gia/${id}`}
               className="menu-m-link"
               onClick={onClose}
             >
-              <span>{a.name}</span>
-              <span className="menu-m-cnt">
-                {posts.filter((p) => p.author === id).length} bài
-              </span>
+              <span>{a.username}</span>
+              <span className="menu-m-cnt">NaN bài</span>
             </Link>
           ))}
           <Link href="/#dang-ky" className="menu-m-link" onClick={onClose}>

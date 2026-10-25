@@ -5,8 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useReadingActions, useReadingStore } from "~/hooks/use-reading-store";
-import { getPostByNo } from "~/lib/data";
-import { img } from "~/lib/utils";
 
 export function ResumeBar() {
   const lastRead = useReadingStore((s) => s.lastRead);
@@ -22,7 +20,7 @@ export function ResumeBar() {
   }, [lastRead]);
 
   if (!visible || !lastRead) return null;
-  const post = getPostByNo(lastRead.no);
+  const post = lastRead;
   if (!post) return null;
 
   return (
@@ -31,12 +29,12 @@ export function ResumeBar() {
       style={{ width: "min(92vw,640px)" }}
     >
       <Link
-        href={`/bai-viet/${post.no}`}
+        href={`/bai-viet/${post.slug}`}
         className="flex items-center gap-[.9rem] flex-1 min-w-0"
       >
         <Image
-          src={img(post.seed, 104, 78)}
-          alt=""
+          src={post.thumbnail.url}
+          alt={post.title}
           width={52}
           height={39}
           className="object-cover shrink-0"
@@ -58,7 +56,7 @@ export function ResumeBar() {
         </div>
       </Link>
       <Link
-        href={`/bai-viet/${post.no}`}
+        href={`/bai-viet/${post.slug}`}
         className="shrink-0 w-9.5 h-9.5 grid place-items-center border border-inverse-border text-son transition-[.25s] hover:bg-son hover:border-son hover:text-white"
         aria-label="Tiếp tục đọc"
       >

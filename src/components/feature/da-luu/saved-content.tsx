@@ -2,34 +2,33 @@
 
 import { Bookmark } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import PostRow from "~/components/shared/post-row";
 import { useReadingActions, useReadingStore } from "~/hooks/use-reading-store";
 import { useRevealOnScroll } from "~/hooks/use-reveal-on-scroll";
 import { useToast } from "~/hooks/use-toast";
-import { posts } from "~/lib/data";
 
 export default function SavedContent() {
-  const [mounted, setMounted] = useState(false);
   const savedSet = useReadingStore((s) => s.savedSet);
   const { toggleSave } = useReadingActions();
   const toast = useToast();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const postList = useMemo(() => {
+    return Array.from(savedSet.values()).sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+  }, [savedSet]);
 
-  const list = mounted ? posts.filter((p) => savedSet.has(p.no)) : [];
+  useRevealOnScroll(postList.length);
 
-  useRevealOnScroll(list.length);
-
-  function handleUnsave(no: string) {
-    const p = posts.find((x) => x.no === no);
-    toggleSave(no);
+  function handleUnsave(id: string) {
+    const p = savedSet.get(id);
     if (p) {
+      toggleSave(p);
       toast(`Đã bỏ lưu "${p.title}".`, {
         label: "Hoàn tác",
-        fn: () => toggleSave(no),
+        fn: () => toggleSave(p),
       });
     }
   }
@@ -52,11 +51,11 @@ export default function SavedContent() {
           </h1>
         </div>
         <span className="font-mono text-[.66rem] tracking-[.12em] uppercase text-muted-foreground">
-          {list.length} bài · lưu trên máy này
+          {postList.length} bài · lưu trên máy này
         </span>
       </div>
 
-      {list.length === 0 ? (
+      {postList.length === 0 ? (
         <div className="border-[1.5px] border-dashed border-border grid place-items-center gap-[.9rem] p-12 text-center mt-6">
           <Bookmark
             className="w-6.5 h-6.5 text-muted-foreground"
@@ -75,9 +74,9 @@ export default function SavedContent() {
         </div>
       ) : (
         <div>
-          {list.map((p, i) => (
+          {postList.map((p, i) => (
             <PostRow
-              key={p.no}
+              key={p.id}
               post={p}
               index={i}
               showUnsave

@@ -1,9 +1,9 @@
 import { ArrowDown } from "lucide-react";
 import Link from "next/link";
-import type { Post } from "~/types";
+import type { PostRow } from "~/types";
 import { FeatureCard } from "./feature-card";
 
-export function HeroSection({ featuredPost }: { featuredPost: Post }) {
+export function HeroSection({ featuredPost }: { featuredPost: PostRow }) {
   return (
     <section
       style={{ padding: "clamp(2.4rem,6vh,4.6rem) 0 clamp(3rem,7vh,5.5rem)" }}
@@ -73,7 +73,7 @@ export function HeroSection({ featuredPost }: { featuredPost: Post }) {
               style={{ "--d": "220ms" } as React.CSSProperties}
             >
               <Link
-                href={`/bai-viet/${featuredPost.no}`}
+                href={`/bai-viet/${featuredPost.slug}`}
                 className="group inline-flex items-center gap-[.6rem] font-mono text-[.7rem] tracking-[.12em] uppercase px-[1.4rem] py-[.9rem] border border-foreground bg-foreground text-background transition-[.3s] hover:bg-son hover:border-son hover:text-white"
               >
                 Đọc số mới này

@@ -1,16 +1,19 @@
 import { notFound } from "next/navigation";
-import { getPostByNo } from "~/lib/data";
-import { createMockApi } from "~/lib/utils";
+import { getPostDetail, queryPosts } from "~/service/server/posts.service";
 import PostDetail from "./post-detail";
 
-const getPostByNoApi = createMockApi(getPostByNo);
-
-async function PostContent({ params }: { params: Promise<{ no: string }> }) {
-  const { no } = await params;
-  const post = await getPostByNoApi(no);
+async function PostContent({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const post = await getPostDetail(slug);
   if (!post) notFound();
 
-  return <PostDetail post={post} />;
+  const relate = await queryPosts({ author: post.author.id });
+  return (
+    <PostDetail
+      post={post}
+      related={relate.data.filter((t) => t.id !== post.id)}
+    />
+  );
 }
 
 export default PostContent;

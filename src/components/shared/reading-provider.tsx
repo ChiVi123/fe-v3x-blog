@@ -2,6 +2,7 @@
 
 import { createContext, useEffect, useMemo, useReducer } from "react";
 import type { ReadingAction, ReadingState, ReadMap } from "~/types";
+import type { PostRow } from "~/types/entities.type";
 
 /* ─── LocalStorage helpers ─── */
 const LS = {
@@ -28,7 +29,9 @@ const LS = {
 
 function loadState(): ReadingState {
   return {
-    savedSet: new Set(LS.get<string[]>("tap-saved", [])),
+    savedSet: new Map<string, PostRow>(
+      LS.get<Array<[string, PostRow]>>("tap-saved", []),
+    ),
     readMap: LS.get<ReadMap>("tap-read", {}),
     lastRead: LS.get<ReadingState["lastRead"]>("tap-lastread", null),
     fsLvl: LS.get<number>("tap-fs", 1),
@@ -38,7 +41,7 @@ function loadState(): ReadingState {
 /* State mặc định giống nhau trên server và client */
 function createInitialState(): ReadingState {
   return {
-    savedSet: new Set<string>(),
+    savedSet: new Map<string, PostRow>(),
     readMap: {},
     lastRead: null,
     fsLvl: 1,
@@ -50,19 +53,19 @@ function reducer(state: ReadingState, action: ReadingAction): ReadingState {
     case "HYDRATE":
       return action.state;
     case "TOGGLE_SAVE": {
-      const next = new Set(state.savedSet);
-      if (next.has(action.no)) next.delete(action.no);
-      else next.add(action.no);
+      const next = new Map(state.savedSet);
+      if (next.has(action.post.id)) next.delete(action.post.id);
+      else next.set(action.post.id, action.post);
       LS.set("tap-saved", [...next]);
       return { ...state, savedSet: next };
     }
     case "SET_PROGRESS": {
-      const readMap = { ...state.readMap, [action.no]: action.pct };
+      const readMap = { ...state.readMap, [action.post.id]: action.pct };
       LS.set("tap-read", readMap);
       return { ...state, readMap };
     }
     case "SET_LAST_READ": {
-      const lastRead = { no: action.no, pct: action.pct };
+      const lastRead = { ...action.post, pct: action.pct };
       LS.set("tap-lastread", lastRead);
       return { ...state, lastRead };
     }

@@ -5,16 +5,22 @@ import { QuoteSection } from "~/components/feature/home/quote-section";
 import { RecentPostsSection } from "~/components/feature/home/recent-posts-section";
 import { TopicsSection } from "~/components/feature/home/topics-section";
 import { ScrollReveal } from "~/components/shared/scroll-reveal";
-import { posts } from "~/lib/data";
+import { getPosts } from "~/service/server/posts.service";
 
-export default function HomePage() {
-  const featured = posts[0];
+export default async function HomePage() {
+  const { data } = await getPosts();
+
+  if (data.length === 0) {
+    return null;
+  }
+
+  const featured = data[0];
 
   return (
     <>
       <HeroSection featuredPost={featured} />
       <Marquee />
-      <RecentPostsSection posts={posts} />
+      <RecentPostsSection posts={data} />
       <TopicsSection />
       <QuoteSection />
       <NewsletterSection />

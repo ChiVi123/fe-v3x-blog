@@ -2,8 +2,6 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { getPostByNo } from "~/lib/data";
-import { img } from "~/lib/utils";
 
 export function HoverPreview() {
   const ref = useRef<HTMLDivElement>(null);
@@ -28,17 +26,16 @@ export function HoverPreview() {
     function onPointerOver(e: PointerEvent) {
       const target = e.target as HTMLElement | null;
       const r = target?.closest(".row") as HTMLElement | null;
+
       if (r && r !== curRow) {
         curRow = r;
-        const no = r.dataset.no;
-        if (no) {
-          const post = getPostByNo(no);
-          if (post) {
-            setImageSrc(img(post.seed, 600, 400));
-            tsc = 1;
-            pv?.classList.add("opacity-100");
-            pv?.classList.remove("opacity-0");
-          }
+        const imageUrl = r.dataset.img;
+
+        if (imageUrl) {
+          setImageSrc(imageUrl);
+          tsc = 1;
+          pv?.classList.add("opacity-100");
+          pv?.classList.remove("opacity-0");
         }
       } else if (!r && curRow) {
         curRow = null;

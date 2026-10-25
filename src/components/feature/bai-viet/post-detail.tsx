@@ -3,30 +3,45 @@
 import { Bookmark, Link2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useReadingActions, useReadingStore } from "~/hooks/use-reading-store";
 import { useToast } from "~/hooks/use-toast";
-import { authors, getAuthorInitials, getRelatedPosts } from "~/lib/data";
-import { img } from "~/lib/utils";
-import type { Post } from "~/types";
+import { dateFormat, getAuthorInitials } from "~/lib/utils";
+import type { PostDetail as PostDetailType, PostRow } from "~/types";
 
 const FS = ["1.02rem", "1.13rem", "1.26rem"];
 
-export default function PostDetail({ post }: { post: Post }) {
-  const author = authors[post.author];
-  const related = getRelatedPosts(post);
-  const ini = author ? getAuthorInitials(author.name) : "TP";
+export default function PostDetail({
+  post,
+  related,
+}: {
+  post: PostDetailType;
+  related: PostRow[];
+}) {
+  const ini = getAuthorInitials(post.author.username);
   const toast = useToast();
 
   const { toggleSave, setProgress, setLastRead, setFs } = useReadingActions();
   const savedSet = useReadingStore((s) => s.savedSet);
   const fsLvl = useReadingStore((s) => s.fsLvl);
-  const isSaved = savedSet.has(post.no);
+  const isSaved = savedSet.has(post.id);
+
+  const postRow: PostRow = useMemo(() => {
+    return {
+      id: post.id,
+      slug: post.slug,
+      title: post.title,
+      thumbnail: post.thumbnail,
+      author: post.author,
+      category: post.category,
+      createdAt: post.createdAt,
+      updatedAt: post.updatedAt,
+    };
+  }, [post]);
 
   // Progress bar
   const progressRef = useRef<HTMLDivElement>(null);
   const lastLSRef = useRef(0);
-  const postNo = post.no;
 
   useEffect(() => {
     function onScroll() {
@@ -37,16 +52,21 @@ export default function PostDetail({ post }: { post: Post }) {
       const now = Date.now();
       if (now - lastLSRef.current > 400) {
         lastLSRef.current = now;
-        if (p > 0.03 && p < 0.97) setLastRead(postNo, p);
-        if (p >= 0.95) setProgress(postNo, 1);
+        if (p > 0.03 && p < 0.97) setLastRead(postRow, p);
+        if (p >= 0.95) setProgress(postRow, 1);
       }
     }
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [postNo, setLastRead, setProgress]);
+  }, [postRow, setLastRead, setProgress]);
 
   // paras with blockquote inserted
-  const paras = [...post.body.map((t) => <p key={t.slice(0, 20)}>{t}</p>)];
+  const paras = [
+    ...post.content
+      .split("\n")
+      .filter((t) => t.trim() !== "")
+      .map((t, index) => <p key={`${post.slug}-${index + 1}`}>{t}</p>),
+  ];
   paras.splice(
     2,
     0,
@@ -54,7 +74,7 @@ export default function PostDetail({ post }: { post: Post }) {
       key="quote"
       className="my-[2.6rem] pl-[1.6rem] border-l-[3px] border-son font-serif italic font-[440] text-[1.35em] leading-[1.45]"
     >
-      &ldquo;{post.quote}&rdquo;
+      &ldquo;Quote&rdquo;
     </blockquote>,
   );
 
@@ -73,7 +93,7 @@ export default function PostDetail({ post }: { post: Post }) {
       >
         {/* Category + issue */}
         <p className="font-mono text-[.68rem] tracking-[.18em] uppercase text-son">
-          {post.cat} · № {post.no}
+          {post.category.name} · № NaN
         </p>
 
         {/* Title */}
@@ -93,24 +113,24 @@ export default function PostDetail({ post }: { post: Post }) {
           className="font-serif italic font-[420] leading-[1.55] text-muted-foreground mb-[1.4rem]"
           style={{ fontSize: "clamp(1.05rem,2.4vw,1.3rem)" }}
         >
-          {post.dek}
+          Deck
         </p>
 
         {/* Meta */}
         <div className="font-mono text-[.68rem] tracking-widest uppercase text-muted-foreground pb-[1.6rem] border-b border-border mb-[2.2rem]">
-          {post.date}.2025 · {post.read} phút đọc ·{" "}
+          {dateFormat(post.createdAt, "long")} · NaN phút đọc ·{" "}
           <Link
-            href={`/tac-gia/${post.author}`}
+            href={`/tac-gia/${post.author.id}`}
             className="text-foreground hover:text-son transition-[color_.25s]"
           >
-            {author?.name ?? "Tác giả"}
+            {post.author.username}
           </Link>
         </div>
 
         {/* Hero image */}
         <figure className="mb-10">
           <Image
-            src={img(post.seed, 1200, 750)}
+            src={post.thumbnail.url}
             alt={`Ảnh minh họa: ${post.title}`}
             width={1200}
             height={750}
@@ -119,7 +139,7 @@ export default function PostDetail({ post }: { post: Post }) {
             style={{ filter: "grayscale(1) contrast(1.05) sepia(.08)" }}
           />
           <figcaption className="mt-[.65rem] font-mono text-[.64rem] tracking-[.08em] text-muted-foreground">
-            Ảnh minh họa — TẠP, số № {post.no}
+            Ảnh minh họa — TẠP, số № NaN
           </figcaption>
         </figure>
 
@@ -141,27 +161,25 @@ export default function PostDetail({ post }: { post: Post }) {
         </div>
 
         {/* Author box */}
-        {author && (
-          <aside className="flex gap-[1.1rem] items-start border border-border p-[1.3rem] mb-12">
-            <span className="shrink-0 w-13.5 h-13.5 grid place-items-center bg-foreground text-background font-serif font-[560] text-[1.1rem] tracking-[.04em]">
-              {ini}
-            </span>
-            <div>
-              <Link
-                href={`/tac-gia/${post.author}`}
-                className="font-serif font-[560] text-[1.1rem] transition-[color_.25s] hover:text-son after:content-['→'] after:inline-block after:ml-[.4rem] after:text-[.85em] after:opacity-0 after:-translate-x-1 after:transition-[.25s] hover:after:opacity-100 hover:after:translate-x-0"
-              >
-                {author.name}
-              </Link>
-              <p className="font-mono text-[.6rem] tracking-[.16em] uppercase text-son my-[.2rem_.2rem_.5rem]">
-                {author.role}
-              </p>
-              <p className="text-[.88rem] leading-[1.65] text-muted-foreground">
-                {author.bio}
-              </p>
-            </div>
-          </aside>
-        )}
+        <aside className="flex gap-[1.1rem] items-start border border-border p-[1.3rem] mb-12">
+          <span className="shrink-0 w-13.5 h-13.5 grid place-items-center bg-foreground text-background font-serif font-[560] text-[1.1rem] tracking-[.04em]">
+            {ini}
+          </span>
+          <div>
+            <Link
+              href={`/tac-gia/${post.author.id}`}
+              className="font-serif font-[560] text-[1.1rem] transition-[color_.25s] hover:text-son after:content-['→'] after:inline-block after:ml-[.4rem] after:text-[.85em] after:opacity-0 after:-translate-x-1 after:transition-[.25s] hover:after:opacity-100 hover:after:translate-x-0"
+            >
+              {post.author.username}
+            </Link>
+            <p className="font-mono text-[.6rem] tracking-[.16em] uppercase text-son my-[.2rem_.2rem_.5rem]">
+              Role
+            </p>
+            <p className="text-[.88rem] leading-[1.65] text-muted-foreground">
+              Bio
+            </p>
+          </div>
+        </aside>
 
         {/* Related */}
         {related.length > 0 && (
@@ -171,12 +189,12 @@ export default function PostDetail({ post }: { post: Post }) {
             </p>
             {related.map((q) => (
               <Link
-                key={q.no}
-                href={`/bai-viet/${q.no}`}
+                key={q.slug}
+                href={`/bai-viet/${q.slug}`}
                 className="flex items-center gap-[1.1rem] w-full text-left border border-border p-[.85rem] mb-[.8rem] transition-[.3s] hover:bg-muted hover:border-foreground group"
               >
                 <Image
-                  src={img(q.seed, 160, 120)}
+                  src={q.thumbnail.url}
                   alt=""
                   width={78}
                   height={58}
@@ -188,7 +206,7 @@ export default function PostDetail({ post }: { post: Post }) {
                     {q.title}
                   </h5>
                   <span className="block mt-[.3rem] font-mono text-[.62rem] text-muted-foreground">
-                    {q.cat} · № {q.no} · {q.read} phút
+                    {q.category.name} · № NaN · NaN phút đọc
                   </span>
                 </span>
               </Link>
@@ -231,7 +249,7 @@ export default function PostDetail({ post }: { post: Post }) {
           aria-pressed={isSaved}
           aria-label={isSaved ? "Bỏ lưu bài viết" : "Lưu bài viết"}
           onClick={() => {
-            toggleSave(post.no);
+            toggleSave(postRow);
             if (isSaved) toast("Đã bỏ bài viết khỏi danh sách đọc.");
             else toast(`Đã lưu "${post.title}" vào danh sách đọc.`);
           }}
@@ -248,7 +266,7 @@ export default function PostDetail({ post }: { post: Post }) {
           className="min-w-10 h-10 grid place-items-center border border-border font-mono text-[.78rem] transition-[.25s] px-[.6rem] hover:bg-foreground hover:text-background hover:border-foreground cursor-pointer"
           aria-label="Chép liên kết bài viết"
           onClick={() => {
-            const url = `${window.location.origin}/bai-viet/${post.no}`;
+            const url = `${window.location.origin}/bai-viet/${post.slug}`;
             navigator.clipboard
               ?.writeText(url)
               .then(() => toast("Đã chép liên kết bài viết vào clipboard."));
