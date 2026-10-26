@@ -18,15 +18,12 @@ export function FeatureCard({ post }: { post: PostRow }) {
             className="w-full aspect-3/2 object-cover grayscale contrast-105 transition-[filter_.6s,transform_.6s] group-hover:grayscale-0 group-hover:scale-[1.025]"
           />
         </div>
-        <figcaption className="p-[1rem_1.1rem_1.1rem] border-t border-foreground">
-          <span className="font-mono text-[.66rem] tracking-[.12em] text-muted-foreground">
-            № NaN
-          </span>
+        <figcaption className="p-[1.1rem_1.1rem] border-t border-foreground">
           <h3 className="font-serif font-[520] text-[1.3rem] leading-tight my-[.4rem_.4rem_.5rem] transition-[color_.3s] group-hover:text-son">
             {post.title}
           </h3>
           <span className="font-mono text-[.66rem] tracking-[.08em] text-muted-foreground uppercase">
-            {post.category.name} · NaN phút đọc
+            {post.category.name}
           </span>
         </figcaption>
       </Link>

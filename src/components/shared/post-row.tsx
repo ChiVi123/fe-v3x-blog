@@ -32,23 +32,13 @@ export default function PostRow({
         { read: isRead },
       )}
       style={{
-        gridTemplateColumns: "4.4rem 8.6rem 1fr auto 2.4rem",
+        gridTemplateColumns: "8.6rem 1fr auto 2.4rem",
         padding: "1.55rem 1.2rem",
         animationDelay: `${index * 60}ms`,
       }}
       data-id={post.id}
       data-img={post.thumbnail.url}
     >
-      {/* № */}
-      <span
-        className={cn(
-          "font-mono text-[.72rem] text-muted-foreground transition-[.3s]",
-          { "line-through opacity-45": isRead },
-        )}
-      >
-        № {index + 1}
-      </span>
-
       {/* category */}
       <span className="font-mono text-[.63rem] tracking-[.13em] uppercase text-son">
         {post.category?.name || "Unknown"}

@@ -93,7 +93,7 @@ export default function PostDetail({
       >
         {/* Category + issue */}
         <p className="font-mono text-[.68rem] tracking-[.18em] uppercase text-son">
-          {post.category.name} · № NaN
+          {post.category.name}
         </p>
 
         {/* Title */}
@@ -118,7 +118,7 @@ export default function PostDetail({
 
         {/* Meta */}
         <div className="font-mono text-[.68rem] tracking-widest uppercase text-muted-foreground pb-[1.6rem] border-b border-border mb-[2.2rem]">
-          {dateFormat(post.createdAt, "long")} · NaN phút đọc ·{" "}
+          {dateFormat(post.createdAt, "long")}
           <Link
             href={`/tac-gia/${post.author.id}`}
             className="text-foreground hover:text-son transition-[color_.25s]"
@@ -139,7 +139,7 @@ export default function PostDetail({
             style={{ filter: "grayscale(1) contrast(1.05) sepia(.08)" }}
           />
           <figcaption className="mt-[.65rem] font-mono text-[.64rem] tracking-[.08em] text-muted-foreground">
-            Ảnh minh họa — TẠP, số № NaN
+            Ảnh minh họa — TẠP
           </figcaption>
         </figure>
 
@@ -206,7 +206,7 @@ export default function PostDetail({
                     {q.title}
                   </h5>
                   <span className="block mt-[.3rem] font-mono text-[.62rem] text-muted-foreground">
-                    {q.category.name} · № NaN · NaN phút đọc
+                    {q.category.name}
                   </span>
                 </span>
               </Link>

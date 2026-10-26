@@ -146,14 +146,14 @@ function SearchOverlay({
               >
                 <span>
                   <span className="block font-mono text-[.6rem] tracking-[.13em] uppercase text-son mb-1">
-                    {p.category.name} · № NaN
+                    {p.category.name}
                   </span>
                   <span className="font-serif font-medium text-[1.05rem]">
                     {p.title}
                   </span>
                 </span>
                 <span className="font-mono text-[.64rem] text-muted-foreground whitespace-nowrap">
-                  {dateFormat(p.createdAt)} · NaN'Đọc
+                  {dateFormat(p.createdAt)}
                 </span>
               </button>
             ))
