@@ -7,23 +7,14 @@ import { useRevealOnScroll } from "~/hooks/use-reveal-on-scroll";
 import { getAuthorInitials } from "~/lib/utils";
 import type { Author, PostRow as PostRowType } from "~/types";
 
-export default function AuthorDetail({
-  author,
-  list,
-}: {
-  author: Author;
-  list: PostRowType[];
-}) {
+export default function AuthorDetail({ author, list }: { author: Author; list: PostRowType[] }) {
   const ini = getAuthorInitials(author.username);
   const shortName = author.username.split(" ").slice(-1)[0] ?? author.username;
 
   useRevealOnScroll(list.length);
 
   return (
-    <div
-      className="max-w-215 mx-auto px-5"
-      style={{ padding: "clamp(2rem,5vw,3.2rem) 20px 7rem" }}
-    >
+    <div className="max-w-215 mx-auto px-5" style={{ padding: "clamp(2rem,5vw,3.2rem) 20px 7rem" }}>
       {/* Back */}
       <Link
         href="/bai-viet"
@@ -47,9 +38,7 @@ export default function AuthorDetail({
           {ini}
         </span>
         <div>
-          <p className="font-mono text-[.68rem] tracking-[.18em] uppercase text-son">
-            Tác giả — TẠP.
-          </p>
+          <p className="font-mono text-[.68rem] tracking-[.18em] uppercase text-son">Tác giả — TẠP.</p>
           <h1
             className="font-serif leading-[1.05] tracking-[-0.015em] mt-2 mb-[.3rem]"
             style={{
@@ -60,15 +49,9 @@ export default function AuthorDetail({
           >
             {author.username}
           </h1>
-          <p className="font-mono text-[.6rem] tracking-[.16em] uppercase text-son">
-            Role
-          </p>
-          <p className="max-w-[52ch] leading-[1.75] text-muted-foreground mt-[.8rem] mb-[1.1rem] text-[1rem]">
-            Bio
-          </p>
-          <p className="font-mono text-[.68rem] tracking-[.12em] uppercase text-son">
-            {list.length} bài viết · NaN phút đọc trên TẠP
-          </p>
+          <p className="font-mono text-[.6rem] tracking-[.16em] uppercase text-son">Role</p>
+          <p className="max-w-[52ch] leading-[1.75] text-muted-foreground mt-[.8rem] mb-[1.1rem] text-[1rem]">Bio</p>
+          <p className="font-mono text-[.68rem] tracking-[.12em] uppercase text-son">{list.length} bài viết</p>
         </div>
       </header>
 

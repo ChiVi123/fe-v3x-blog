@@ -5,23 +5,18 @@ import { QuoteSection } from "~/components/feature/home/quote-section";
 import { RecentPostsSection } from "~/components/feature/home/recent-posts-section";
 import { TopicsSection } from "~/components/feature/home/topics-section";
 import { ScrollReveal } from "~/components/shared/scroll-reveal";
-import { getPosts } from "~/service/server/posts.service";
+import { getCategories } from "~/service/server/categories.service";
+import { queryPostsCache } from "~/service/server/posts.service";
 
 export default async function HomePage() {
-  const { data } = await getPosts();
-
-  if (data.length === 0) {
-    return null;
-  }
-
-  const featured = data[0];
+  const [{ data: posts }, { data: categories }] = await Promise.all([queryPostsCache(), getCategories()]);
 
   return (
     <>
-      <HeroSection featuredPost={featured} />
-      <Marquee />
-      <RecentPostsSection posts={data} />
-      <TopicsSection />
+      <HeroSection />
+      <Marquee categories={categories} />
+      <RecentPostsSection posts={posts} />
+      <TopicsSection categories={categories} />
       <QuoteSection />
       <NewsletterSection />
       <ScrollReveal />
@@ -33,7 +28,7 @@ export default async function HomePage() {
           .hero-side { max-width: 440px; }
         }
         @media (max-width: 860px) {
-          .topic { grid-template-columns: 2.4rem 1fr auto !important; }
+          .topic { grid-template-columns: 1fr auto !important; }
           .topic > span:nth-child(4) { display: none; }
         }
         @media (max-width: 860px) {

@@ -1,16 +1,3 @@
-// export type Post_legacy = {
-//   no: string;
-//   cat: string;
-//   title: string;
-//   date: string;
-//   read: number;
-//   seed: string;
-//   author: string;
-//   dek: string;
-//   quote: string;
-//   body: string[];
-// };
-
 export type PostDetail = {
   id: string;
   title: string;
@@ -29,6 +16,7 @@ export type Category = {
   id: string;
   name: string;
   slug: string;
+  postsCount: number;
 };
 
 export type Author = {

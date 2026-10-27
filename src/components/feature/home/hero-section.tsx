@@ -1,17 +1,32 @@
 import { ArrowDown } from "lucide-react";
 import Link from "next/link";
-import type { PostRow } from "~/types";
+import { getFeaturedPosts } from "~/service/server/posts.service";
 import { FeatureCard } from "./feature-card";
 
-export function HeroSection({ featuredPost }: { featuredPost: PostRow }) {
+async function getCurrentMonthYear() {
+  "use cache";
+
+  return new Date().toLocaleDateString("vi-VN", {
+    month: "2-digit",
+    year: "numeric",
+  });
+}
+
+export async function HeroSection() {
+  const [dateNow, { data: featuredPosts }] = await Promise.all([
+    getCurrentMonthYear(),
+    getFeaturedPosts(),
+  ]);
+  const featuredPost = featuredPosts[0];
+
   return (
     <section
       style={{ padding: "clamp(2.4rem,6vh,4.6rem) 0 clamp(3rem,7vh,5.5rem)" }}
     >
       <div className="wrapper">
         <div className="reveal flex justify-between gap-4 border-t border-foreground pt-[.85rem] mb-[clamp(2rem,5vh,3.4rem)] font-mono text-[.66rem] tracking-[.13em] uppercase text-muted-foreground">
-          <span>Số 07 — Tháng Sáu, 2025</span>
-          <span>Hà Nội, Việt Nam</span>
+          <span>{dateNow}</span>
+          <span>Hồ Chí Minh City, Việt Nam</span>
           <span className="hidden sm:inline">Bản MVP</span>
         </div>
         <div
