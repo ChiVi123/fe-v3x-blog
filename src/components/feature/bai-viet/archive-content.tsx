@@ -32,9 +32,8 @@ export default function ArchiveContent({
 
   useEffect(() => {
     void filter;
-    void shown;
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [filter, shown]);
+  }, [filter]);
 
   const createQueryString = useCallback(
     (name: string, value: string) => {

@@ -27,7 +27,7 @@ export function TopicsSection({ categories }: { categories: Category[] }) {
           {categories.map((category, i) => (
             <Link
               key={category.id}
-              href={`/bai-viet?cat=${encodeURIComponent(category.name)}`}
+              href={`/bai-viet?category=${encodeURIComponent(category.id)}`}
               className="topic group grid items-center gap-[1.3rem] border-t border-border transition-[background_.35s] hover:bg-foreground last:border-b"
               style={{
                 gridTemplateColumns: "1fr auto 2.6rem",

@@ -3,6 +3,7 @@ export type PostDetail = {
   title: string;
   slug: string;
   content: string;
+  readingTime: number;
   category: Category;
   author: Author;
   thumbnail: Image;
@@ -22,6 +23,11 @@ export type Category = {
 export type Author = {
   id: string;
   username: string;
+  email: string;
+  bio: string;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type Image = {

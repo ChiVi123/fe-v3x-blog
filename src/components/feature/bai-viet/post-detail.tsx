@@ -21,16 +21,8 @@ export default function PostDetail({ post, related }: { post: PostDetailType; re
   const isSaved = savedSet.has(post.id);
 
   const postRow: PostRow = useMemo(() => {
-    return {
-      id: post.id,
-      slug: post.slug,
-      title: post.title,
-      thumbnail: post.thumbnail,
-      author: post.author,
-      category: post.category,
-      createdAt: post.createdAt,
-      updatedAt: post.updatedAt,
-    };
+    const { content: _, ...row } = post;
+    return { ...row };
   }, [post]);
 
   // Progress bar
@@ -98,7 +90,7 @@ export default function PostDetail({ post, related }: { post: PostDetailType; re
 
         {/* Meta */}
         <div className="font-mono text-[.68rem] tracking-widest uppercase text-muted-foreground pb-[1.6rem] border-b border-border mb-[2.2rem]">
-          {dateFormat(post.createdAt, "long")}{" "}
+          {dateFormat(post.createdAt, "long")} · {post.readingTime} phút đọc ·{" "}
           <Link href={`/tac-gia/${post.author.id}`} className="text-foreground hover:text-son transition-[color_.25s]">
             {post.author.username}
           </Link>

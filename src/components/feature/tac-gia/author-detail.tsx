@@ -49,8 +49,10 @@ export default function AuthorDetail({ author, list }: { author: Author; list: P
           >
             {author.username}
           </h1>
-          <p className="font-mono text-[.6rem] tracking-[.16em] uppercase text-son">Role</p>
-          <p className="max-w-[52ch] leading-[1.75] text-muted-foreground mt-[.8rem] mb-[1.1rem] text-[1rem]">Bio</p>
+          <p className="font-mono text-[.6rem] tracking-[.16em] uppercase text-son">{author.role}</p>
+          <p className="max-w-[52ch] leading-[1.75] text-muted-foreground mt-[.8rem] mb-[1.1rem] text-[1rem]">
+            {author.bio}
+          </p>
           <p className="font-mono text-[.68rem] tracking-[.12em] uppercase text-son">{list.length} bài viết</p>
         </div>
       </header>

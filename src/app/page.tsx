@@ -9,13 +9,13 @@ import { getCategories } from "~/service/server/categories.service";
 import { queryPostsCache } from "~/service/server/posts.service";
 
 export default async function HomePage() {
-  const [{ data: posts }, { data: categories }] = await Promise.all([queryPostsCache(), getCategories()]);
+  const [{ data: posts, total }, { data: categories }] = await Promise.all([queryPostsCache(), getCategories()]);
 
   return (
     <>
       <HeroSection />
       <Marquee categories={categories} />
-      <RecentPostsSection posts={posts} />
+      <RecentPostsSection posts={posts} total={total} />
       <TopicsSection categories={categories} />
       <QuoteSection />
       <NewsletterSection />

@@ -15,12 +15,7 @@ export interface PostRowProps {
   onUnsave?: (no: string) => void;
 }
 
-export default function PostRow({
-  post,
-  index = 0,
-  showUnsave = false,
-  onUnsave,
-}: PostRowProps) {
+export default function PostRow({ post, index = 0, showUnsave = false, onUnsave }: PostRowProps) {
   const readPct = useReadingStore((s) => s.readMap[post.id] ?? 0);
   const isRead = readPct >= 0.95;
 
@@ -54,7 +49,7 @@ export default function PostRow({
 
       {/* meta */}
       <span className="font-mono text-[.66rem] tracking-[.06em] text-muted-foreground whitespace-nowrap">
-        {dateFormat(post.createdAt)} · NaN phút
+        {dateFormat(post.createdAt)} · {post.readingTime} phút
         {isRead && <em className="not-italic text-son"> · đã đọc</em>}
       </span>
 
