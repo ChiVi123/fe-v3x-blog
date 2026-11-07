@@ -1,8 +1,16 @@
-import Image from "next/image";
 import Link from "next/link";
+import Image from "~/components/shared/image";
 import type { PostRow } from "~/types";
 
-export function FeatureCard({ post }: { post: PostRow }) {
+export function FeatureCard({ post }: { post?: PostRow }) {
+  if (!post) {
+    return (
+      <div className="border border-foreground bg-background p-8 text-center font-mono text-[.75rem] text-muted-foreground uppercase tracking-widest">
+        Chưa có bài viết nổi bật
+      </div>
+    );
+  }
+
   return (
     <figure className="relative border border-foreground cursor-pointer bg-background group">
       <span className="absolute -top-px -left-px bg-son text-son-foreground font-mono text-[.6rem] tracking-[.14em] uppercase px-3 py-[.38rem] z-2">
@@ -15,6 +23,7 @@ export function FeatureCard({ post }: { post: PostRow }) {
             alt={`Ảnh minh họa: ${post.title}`}
             width={900}
             height={600}
+            loading="eager"
             className="w-full aspect-3/2 object-cover grayscale contrast-105 transition-[filter_.6s,transform_.6s] group-hover:grayscale-0 group-hover:scale-[1.025]"
           />
         </div>

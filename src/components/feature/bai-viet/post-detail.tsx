@@ -1,9 +1,9 @@
 "use client";
 
 import { Bookmark, Link2 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef } from "react";
+import Image from "~/components/shared/image";
 import { useReadingActions, useReadingStore } from "~/hooks/use-reading-store";
 import { useToast } from "~/hooks/use-toast";
 import { dateFormat, getAuthorInitials } from "~/lib/utils";

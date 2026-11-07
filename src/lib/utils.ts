@@ -1,38 +1,4 @@
-/** Tạo URL ảnh Picsum theo seed */
-export const img = (seed: string, w: number, h: number) =>
-  `https://picsum.photos/seed/${seed}/${w}/${h}.jpg`;
-
-/** Bỏ dấu tiếng Việt để so sánh tìm kiếm */
-export const deaccent = (s: string) =>
-  s
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/đ/g, "d");
-
-export const createMockApi =
-  <Args extends unknown[], R>(
-    callback: (...args: Args) => R,
-    delay: number = 1000,
-    options: { shouldError: boolean } = { shouldError: false },
-  ) =>
-  (...args: Args): Promise<R> => {
-    const shouldError = options.shouldError;
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (shouldError) {
-          reject(new Error("Failed to fetch data"));
-        } else {
-          resolve(callback(...args));
-        }
-      }, delay);
-    });
-  };
-
-export function dateFormat(
-  date: string | number | Date,
-  type: "short" | "long" = "short",
-) {
+export function dateFormat(date: string | number | Date, type: "short" | "long" = "short") {
   const d = new Date(date);
 
   if (type === "short") {
@@ -56,4 +22,18 @@ export function getAuthorInitials(name: string): string {
     .map((w) => w[0])
     .slice(-2)
     .join("");
+}
+
+/**
+ * Auto inject f_auto, q_auto into Cloudinary URL
+ * @param url
+ * @param width
+ * @returns string
+ */
+export function optimizeCloudinaryUrl(url: string, width?: number | `${number}`): string {
+  if (!url.includes("res.cloudinary.com") || url.includes("f_auto")) {
+    return url;
+  }
+  const transform = width ? `f_auto,q_auto,w_${width}` : "f_auto,q_auto";
+  return url.replace("/image/upload/", `/image/upload/${transform}/`);
 }

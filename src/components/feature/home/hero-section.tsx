@@ -13,26 +13,18 @@ async function getCurrentMonthYear() {
 }
 
 export async function HeroSection() {
-  const [dateNow, { data: featuredPosts }] = await Promise.all([
-    getCurrentMonthYear(),
-    getFeaturedPosts(),
-  ]);
+  const [dateNow, { data: featuredPosts }] = await Promise.all([getCurrentMonthYear(), getFeaturedPosts()]);
   const featuredPost = featuredPosts[0];
 
   return (
-    <section
-      style={{ padding: "clamp(2.4rem,6vh,4.6rem) 0 clamp(3rem,7vh,5.5rem)" }}
-    >
+    <section style={{ padding: "clamp(2.4rem,6vh,4.6rem) 0 clamp(3rem,7vh,5.5rem)" }}>
       <div className="wrapper">
         <div className="reveal flex justify-between gap-4 border-t border-foreground pt-[.85rem] mb-[clamp(2rem,5vh,3.4rem)] font-mono text-[.66rem] tracking-[.13em] uppercase text-muted-foreground">
           <span>{dateNow}</span>
           <span>Hồ Chí Minh City, Việt Nam</span>
           <span className="hidden sm:inline">Bản MVP</span>
         </div>
-        <div
-          className="hero-grid grid gap-[clamp(2rem,5vw,5rem)] items-end"
-          style={{ gridTemplateColumns: "7fr 4fr" }}
-        >
+        <div className="hero-grid grid gap-[clamp(2rem,5vw,5rem)] items-end" style={{ gridTemplateColumns: "7fr 4fr" }}>
           <div>
             <h1
               className="reveal font-serif leading-[1.02] tracking-[-0.02em]"
@@ -80,23 +72,22 @@ export async function HeroSection() {
               className="reveal max-w-[46ch] text-[1.02rem] leading-[1.75] text-muted-foreground my-8"
               style={{ "--d": "140ms" } as React.CSSProperties}
             >
-              Tạp chí trực tuyến về viết, đọc và những điều nhỏ nhặt — đăng một
-              bài mỗi ngày, trừ những ngày chúng tôi bận đọc.
+              Tạp chí trực tuyến về viết, đọc và những điều nhỏ nhặt — đăng một bài mỗi ngày, trừ những ngày chúng tôi
+              bận đọc.
             </p>
-            <div
-              className="reveal flex gap-[.8rem] flex-wrap"
-              style={{ "--d": "220ms" } as React.CSSProperties}
-            >
-              <Link
-                href={`/bai-viet/${featuredPost.slug}`}
-                className="group inline-flex items-center gap-[.6rem] font-mono text-[.7rem] tracking-[.12em] uppercase px-[1.4rem] py-[.9rem] border border-foreground bg-foreground text-background transition-[.3s] hover:bg-son hover:border-son hover:text-white"
-              >
-                Đọc số mới này
-                <ArrowDown
-                  className="w-3.5 h-3.5 transition-[transform_.3s] group-hover:translate-y-0.75"
-                  strokeWidth={2}
-                />
-              </Link>
+            <div className="reveal flex gap-[.8rem] flex-wrap" style={{ "--d": "220ms" } as React.CSSProperties}>
+              {featuredPost ? (
+                <Link
+                  href={`/bai-viet/${featuredPost.slug}`}
+                  className="group inline-flex items-center gap-[.6rem] font-mono text-[.7rem] tracking-[.12em] uppercase px-[1.4rem] py-[.9rem] border border-foreground bg-foreground text-background transition-[.3s] hover:bg-son hover:border-son hover:text-white"
+                >
+                  Đọc số mới này
+                  <ArrowDown
+                    className="w-3.5 h-3.5 transition-[transform_.3s] group-hover:translate-y-0.75"
+                    strokeWidth={2}
+                  />
+                </Link>
+              ) : null}
               <Link
                 href="/bai-viet"
                 className="inline-flex items-center gap-[.6rem] font-mono text-[.7rem] tracking-[.12em] uppercase px-[1.4rem] py-[.9rem] border border-foreground transition-[.3s] hover:bg-foreground hover:text-background"
@@ -105,10 +96,7 @@ export async function HeroSection() {
               </Link>
             </div>
           </div>
-          <aside
-            className="reveal hero-side"
-            style={{ "--d": "180ms" } as React.CSSProperties}
-          >
+          <aside className="reveal hero-side" style={{ "--d": "180ms" } as React.CSSProperties}>
             <FeatureCard post={featuredPost} />
           </aside>
         </div>

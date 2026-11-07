@@ -23,13 +23,19 @@ export function RecentPostsSection({ posts, total: allPostsCount }: { posts: Pos
             </h2>
           </div>
           <span className="font-mono text-[.66rem] tracking-[.12em] uppercase text-muted-foreground">
-            {posts.length} bài · cập nhật {dateFormat(latestPost.createdAt, "short")}
+            {posts.length > 0 && latestPost
+              ? `${posts.length} bài · cập nhật ${dateFormat(latestPost.createdAt, "short")}`
+              : "0 bài viết"}
           </span>
         </div>
         <div id="homeList">
-          {posts.slice(0, 4).map((p, i) => (
-            <PostRow key={p.id} post={p} index={i} />
-          ))}
+          {posts.length > 0 ? (
+            posts.slice(0, 4).map((p, i) => <PostRow key={p.id} post={p} index={i} />)
+          ) : (
+            <div className="py-12 text-center font-mono text-[.75rem] text-muted-foreground uppercase tracking-widest">
+              Chưa có bài viết nào
+            </div>
+          )}
           <Link
             href="/bai-viet"
             className="group flex justify-center items-center gap-[.7rem] px-[1.2rem] mx-[-1.2rem] py-6 border-t border-border font-mono text-[.7rem] tracking-[.13em] uppercase transition-[.3s] hover:bg-foreground hover:text-background"

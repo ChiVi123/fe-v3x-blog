@@ -1,9 +1,9 @@
 "use client";
 
 import { ArrowRight, X } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Image from "~/components/shared/image";
 import { useReadingActions, useReadingStore } from "~/hooks/use-reading-store";
 
 export function ResumeBar() {
@@ -28,10 +28,7 @@ export function ResumeBar() {
       className="fixed bottom-[calc(14px+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 z-44 flex items-center gap-[.9rem] bg-inverse text-inverse-foreground border border-inverse px-[.8rem] py-[.65rem] shadow-[0_16px_44px_rgba(0,0,0,.32)] cursor-pointer animate-[rsIn_.5s_cubic-bezier(.22,1,.36,1)_both]"
       style={{ width: "min(92vw,640px)" }}
     >
-      <Link
-        href={`/bai-viet/${post.slug}`}
-        className="flex items-center gap-[.9rem] flex-1 min-w-0"
-      >
+      <Link href={`/bai-viet/${post.slug}`} className="flex items-center gap-[.9rem] flex-1 min-w-0">
         <Image
           src={post.thumbnail.url}
           alt={post.title}
@@ -48,10 +45,7 @@ export function ResumeBar() {
             {post.title}
           </span>
           <span className="block h-0.75 mt-2 bg-[rgba(245,241,232,.22)]">
-            <i
-              className="block h-full bg-son"
-              style={{ width: `${lastRead.pct * 100}%` }}
-            />
+            <i className="block h-full bg-son" style={{ width: `${lastRead.pct * 100}%` }} />
           </span>
         </div>
       </Link>
